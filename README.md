@@ -16,3 +16,9 @@ Agora que temos as bases de criação de APIs e banco de dados, o próximo níve
 - Autenticação e autorização
 - Roteamento
 - Postman
+
+# Banco de dados
+
+# Lista de requisitos
+
+# Exemplos de requisição
