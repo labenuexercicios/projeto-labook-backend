@@ -33,6 +33,7 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 - Código
     - [ ]  POO
     - [ ]  Arquitetura em camadas
+    - [ ]  Roteadores no Express
 
 - Autenticação e autorização
     - [ ]  identificação UUID
