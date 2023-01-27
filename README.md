@@ -45,6 +45,7 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 # Exemplos de requisição
 
 ## Signup
+Endpoint público utilizado para cadastro. Devolve um token jwt.
 ```typescript
 // request POST /users/signup
 // body JSON
@@ -62,6 +63,7 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 ```
 
 ## Login
+Endpoint público utilizado para login. Devolve um token jwt.
 ```typescript
 // request POST /users/login
 // body JSON
@@ -78,6 +80,7 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 ```
 
 ## Get posts
+Endpoint protegido, requer um token jwt para acessá-lo.
 ```typescript
 // request GET /posts
 
@@ -112,6 +115,7 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 ```
 
 ## Create post
+Endpoint protegido, requer um token jwt para acessá-lo.
 ```typescript
 // request POST /posts
 // headers.Authorization = "token jwt"
@@ -125,6 +129,8 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 ```
 
 ## Edit post
+Endpoint protegido, requer um token jwt para acessá-lo.<br>
+Só quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
 ```typescript
 // request PUT /posts/:id
 // headers.Authorization = "token jwt"
@@ -138,6 +144,9 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 ```
 
 ## Delete post
+Endpoint protegido, requer um token jwt para acessá-lo.<br>
+Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer pessoa.
+
 ```typescript
 // request DELETE /posts/:id
 // headers.Authorization = "token jwt"
@@ -147,13 +156,15 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 ```
 
 ## Like or dislike post
+Endpoint protegido, requer um token jwt para acessá-lo.<br>
+Quem criou o post não pode dar like ou dislike no mesmo.
 ### Like
 ```typescript
 // request PUT /posts/:id/like
 // headers.Authorization = "token jwt"
 // body JSON
 {
-    like: 1
+    "like": 1
 }
 
 // response
@@ -166,7 +177,7 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 // headers.Authorization = "token jwt"
 // body JSON
 {
-    like: 0
+    "like": -1
 }
 
 // response
