@@ -157,14 +157,16 @@ Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer p
 
 ## Like or dislike post
 Endpoint protegido, requer um token jwt para acessá-lo.<br>
-Quem criou o post não pode dar like ou dislike no mesmo.
+Quem criou o post não pode dar like ou dislike no mesmo.<br>
+Caso dê um like em um post que já tenha dado like, o like é desfeito.<br>
+Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.
 ### Like
 ```typescript
 // request PUT /posts/:id/like
 // headers.Authorization = "token jwt"
 // body JSON
 {
-    "like": 1
+    "like": true
 }
 
 // response
@@ -177,7 +179,7 @@ Quem criou o post não pode dar like ou dislike no mesmo.
 // headers.Authorization = "token jwt"
 // body JSON
 {
-    "like": -1
+    "like": false
 }
 
 // response
