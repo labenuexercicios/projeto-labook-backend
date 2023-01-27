@@ -157,9 +157,11 @@ Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer p
 
 ## Like or dislike post
 Endpoint protegido, requer um token jwt para acessá-lo.<br>
-Quem criou o post não pode dar like ou dislike no mesmo.<br>
+Quem criou o post não pode dar like ou dislike no mesmo.<br><br>
 Caso dê um like em um post que já tenha dado like, o like é desfeito.<br>
-Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.
+Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.<br><br>
+Caso dê um like em um post que tenha dado dislike, o like sobrescreve o dislike.<br>
+Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like.
 ### Like
 ```typescript
 // request PUT /posts/:id/like
