@@ -122,20 +122,6 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
 // response
 // status 201 CREATED
-[
-    {
-        "id": "uma uuid v4",
-        "content": "Partiu happy hour!",
-        "likes": 3,
-        "dislikes" 0,
-        "created_at": "2023-01-21T16:00:26:000Z"
-        "updated_at": "2023-01-21T16:00:26:000Z"
-        "creator": {
-            "id": "uma uuid v4",
-            "name": "Fulano"
-        }
-    }
-]
 ```
 
 ## Edit post
