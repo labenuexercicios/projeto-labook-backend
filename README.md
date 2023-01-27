@@ -30,11 +30,6 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
     - [ ]  delete post
     - [ ]  like / dislike post
 
-- Código
-    - [ ]  POO
-    - [ ]  Arquitetura em camadas
-    - [ ]  Roteadores no Express
-
 - Autenticação e autorização
     - [ ]  identificação UUID
     - [ ]  senhas hasheadas com Bcrypt
@@ -42,6 +37,11 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
     - [ ]  somente quem se logou pode criar posts
     - [ ]  somente quem se logou pode dar like ou dislike em um post
     - [ ]  somente admins podem deletar posts de outras pessoas
+ 
+ - Código
+    - [ ]  POO
+    - [ ]  Arquitetura em camadas
+    - [ ]  Roteadores no Express
 
 # Exemplos de requisição
 
