@@ -34,9 +34,6 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
     - [ ]  identificação UUID
     - [ ]  senhas hasheadas com Bcrypt
     - [ ]  tokens JWT
-    - [ ]  somente quem se logou pode criar posts
-    - [ ]  somente quem se logou pode dar like ou dislike em um post
-    - [ ]  somente admins podem deletar posts de outras pessoas
  
  - Código
     - [ ]  POO
