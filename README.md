@@ -18,6 +18,7 @@ Agora que temos as bases de criação de APIs e banco de dados, o próximo níve
 - Postman
 
 # Banco de dados
+![projeto-labook](https://user-images.githubusercontent.com/29845719/215166563-e25b92ce-6a76-4d8f-815f-e4c310a8e8bb.png)
 https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
 # Lista de requisitos
