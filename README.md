@@ -21,5 +21,42 @@ Agora que temos as bases de criação de APIs e banco de dados, o próximo níve
 https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
 # Lista de requisitos
+- Endpoints
+    - [ ]  signup
+    - [ ]  login
+    - [ ]  get posts
+    - [ ]  create post
+    - [ ]  edit post
+    - [ ]  delete post
+    - [ ]  like / dislike post
+
+- Código
+    - [ ]  POO
+    - [ ]  Arquitetura em camadas
+
+- Autenticação e autorização
+    - [ ]  identificação UUID
+    - [ ]  senhas hasheadas com Bcrypt
+    - [ ]  tokens JWT
+    - [ ]  somente quem se logou pode criar posts
+    - [ ]  somente quem se logou pode dar like ou dislike em um post
+    - [ ]  somente admins podem deletar posts de outras pessoas
 
 # Exemplos de requisição
+
+## Signup
+```typescript
+// request
+// body JSON
+{
+  "name": "Beltrana",
+  "email: "beltrana@email.com",
+  "password": "beltrana00"
+}
+
+// response
+// status 201 CREATED
+{
+  token: "um token jwt"
+}
+```
