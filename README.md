@@ -51,7 +51,7 @@ Endpoint público utilizado para cadastro. Devolve um token jwt.
 // body JSON
 {
   "name": "Beltrana",
-  "email: "beltrana@email.com",
+  "email": "beltrana@email.com",
   "password": "beltrana00"
 }
 
@@ -68,7 +68,7 @@ Endpoint público utilizado para login. Devolve um token jwt.
 // request POST /users/login
 // body JSON
 {
-  "email: "beltrana@email.com",
+  "email": "beltrana@email.com",
   "password": "beltrana00"
 }
 
