@@ -83,6 +83,7 @@ Endpoint público utilizado para login. Devolve um token jwt.
 Endpoint protegido, requer um token jwt para acessá-lo.
 ```typescript
 // request GET /posts
+// headers.authorization = "token jwt"
 
 // response
 // status 200 OK
@@ -118,7 +119,7 @@ Endpoint protegido, requer um token jwt para acessá-lo.
 Endpoint protegido, requer um token jwt para acessá-lo.
 ```typescript
 // request POST /posts
-// headers.Authorization = "token jwt"
+// headers.authorization = "token jwt"
 // body JSON
 {
     "content": "Partiu happy hour!"
@@ -133,7 +134,7 @@ Endpoint protegido, requer um token jwt para acessá-lo.<br>
 Só quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
 ```typescript
 // request PUT /posts/:id
-// headers.Authorization = "token jwt"
+// headers.authorization = "token jwt"
 // body JSON
 {
     "content": "Partiu happy hour lá no point de sempre!"
@@ -149,23 +150,23 @@ Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer p
 
 ```typescript
 // request DELETE /posts/:id
-// headers.Authorization = "token jwt"
+// headers.authorization = "token jwt"
 
 // response
 // status 200 OK
 ```
 
-## Like or dislike post
+## Like or dislike post (mesmo endpoint faz as duas coisas)
 Endpoint protegido, requer um token jwt para acessá-lo.<br>
 Quem criou o post não pode dar like ou dislike no mesmo.<br><br>
 Caso dê um like em um post que já tenha dado like, o like é desfeito.<br>
 Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.<br><br>
 Caso dê um like em um post que tenha dado dislike, o like sobrescreve o dislike.<br>
 Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like.
-### Like
+### Like (funcionalidade 1)
 ```typescript
 // request PUT /posts/:id/like
-// headers.Authorization = "token jwt"
+// headers.authorization = "token jwt"
 // body JSON
 {
     "like": true
@@ -175,10 +176,10 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 // status 200 OK
 ```
 
-### Dislike
+### Dislike (funcionalidade 2)
 ```typescript
 // request PUT /posts/:id/like
-// headers.Authorization = "token jwt"
+// headers.authorization = "token jwt"
 // body JSON
 {
     "like": false
