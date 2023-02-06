@@ -158,11 +158,6 @@ Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer p
 
 ## Like or dislike post (mesmo endpoint faz as duas coisas)
 
-### Para entender a tabela likes_dislikes
-- quando like valer 1 é porque a pessoa deu like no post
-- quando like valor 0 é porque a pessoa deu dislike no post
-- caso não exista um registro da pessoa com relação ao post, é porque a pessoa não deu like nem dislike
-
 Endpoint protegido, requer um token jwt para acessá-lo.<br>
 Quem criou o post não pode dar like ou dislike no mesmo.<br><br>
 Caso dê um like em um post que já tenha dado like, o like é desfeito.<br>
@@ -194,3 +189,8 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 // response
 // status 200 OK
 ```
+
+### Para entender a tabela likes_dislikes
+- quando like valer 1 é porque a pessoa deu like no post
+- quando like valor 0 é porque a pessoa deu dislike no post
+- caso não exista um registro da pessoa com relação ao post, é porque a pessoa não deu like nem dislike
