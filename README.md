@@ -192,5 +192,9 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 
 ### Para entender a tabela likes_dislikes
 - quando like valer 1 é porque a pessoa deu like no post
+    - na requisição recebe true
+    
 - quando like valor 0 é porque a pessoa deu dislike no post
+    - na requisição recebe false
+    
 - caso não exista um registro da pessoa com relação ao post, é porque a pessoa não deu like nem dislike
