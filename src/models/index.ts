@@ -9,15 +9,19 @@ import { UserController } from "../controller/UserController";
 import { PostController } from "../controller/PostController";
 import { userRouter } from "../Router/userRouter";
 import { postRouter } from "../Router/postRouter";
+import dotenv from "dotenv"
 
+
+
+dotenv.config()
 
 const app = express()
 app.use(cors())
 app.use(express.json())
 
 
-app.listen(3003, () => {
-    console.log("Servidor rodando na porta 3003");
+app.listen(process.env.PORT, () => {
+    console.log(`Servidor rodando na porta ${process.env.PORT}`);
 })
 
 

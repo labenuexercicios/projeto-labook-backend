@@ -1,42 +1,33 @@
 import { PostDataBase } from "../database/PostDataBase";
 import { UserDataBase } from "../database/UserDataBase";
+import { CreatePostDTO, DeletePostInputDTO, EditPostInputDTO, GetPostInputDTO, GetPostOutputDTO } from "../dto/userDTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { Post } from "../models/Post";
-import { TPosts, TPostsLike } from "../models/types";
+import { TPosts, TPostsLike, GetPostDB } from "../models/types";
 import { User } from "../models/User";
+import { HashManager } from "../services/HashManager";
+import { IdGenerator } from "../services/idGenerator";
+import { TokenManager } from "../services/TokenManager";
 
 export class PostBusiness{
-    public createPost = async (input: any)=>{
-        const { id, creator_id, content, likes, dislikes, created_at, updated_at } = input;
+    constructor(
+        private postDataBase: PostDataBase,
+        private idGenerator: IdGenerator,
+        private tokenManager: TokenManager,
+        private hashManager: HashManager
+    ){}
+    public createPost = async (input: CreatePostDTO): Promise<void>=>{
+        const { token, content } = input;
             
-        if (!id || !creator_id || !content  ) {
-
-            throw new BadRequestError("Dados inválidos")
+        if(token === undefined){
+            throw new BadRequestError("token ausente")
         }
 
-        if (id !== undefined) {
+        const payload = this.tokenManager.getPayload(token)
 
-            if (typeof id !== "string") {
-    
-                throw new BadRequestError("'id' deve ser string")
-               }
-            }
-        
-        if (creator_id !== undefined) {
-
-            if (typeof creator_id !== "string") {
-    
-                throw new BadRequestError("'creator_id' deve ser string")
-                 }
-            }
-
-        if (likes !== undefined) {
-
-            if (typeof likes !== "number") {
-    
-                throw new BadRequestError("'likes' deve ser number")
-                }
-            }
+        if(payload === null){
+            throw new BadRequestError("token inválido")
+        }
 
         if (content !== undefined) {
 
@@ -47,29 +38,12 @@ export class PostBusiness{
             }
 
 
-        if (dislikes !== undefined) {
-
-            if (typeof dislikes !== "number") {
-    
-                throw new BadRequestError("'dislikes' deve ser number")
-                }
-            }
-
-        const postDataBase = new PostDataBase()
-
-        const idExists = await postDataBase.findGetPostId(id)
-
-        if (idExists) {
-
-            throw new BadRequestError("'id' do post já existe");
-        }
-
         const postIntance = new Post(
-            id,
-            creator_id,
-            content,
-            likes,
-            dislikes,
+            this.idGenerator.generate(),
+            payload.id,
+            payload.name,
+            0,
+            0,
             new Date().toISOString(),
             new Date().toISOString()
         )
@@ -85,50 +59,32 @@ export class PostBusiness{
             updated_at: postIntance.getUpdateAt()
         }
 
-        const postOutput = await postDataBase.insertPost(newProduct)
+       await this.postDataBase.insertPost(newProduct)
 
-        const output ={
-            message: "Post criado com sucesso",
-            content: newProduct.content
-        }
-        
-        return output
        
     }
 
-    public getPost = async () =>{
-        const postDataBase = new PostDataBase()
+    public getPost = async (input: GetPostInputDTO) =>{
+
+        const { token } = input
+
+        if(token === undefined){
+            throw new BadRequestError("token ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+
+        if(payload === null){
+            throw new BadRequestError("token inválido")
+        }
+
     
-        const resultPosts = await postDataBase.findGetPost()
+        const resultPosts = await this.postDataBase.findGetPost()
 
         const userDataBase = new UserDataBase()
 
         const resultUsers = await userDataBase.findGetUsers()
 
-       
-
-        // const resultUser: User[] = resultUsers.map((result)=>
-        // new User(
-        //   result.id,
-        //   result.name,
-        //   result.email,
-        //   result.password,
-        //   result.role,
-        //   result.created_at
-        // )
-        // )
-        
-        // const resultPost: Post[] = resultPosts.map((result)=>
-        // new Post(
-        //   result.id,
-        //   result.creator_id,
-        //   result.content,
-        //   result.likes,
-        //   result.dislikes,
-        //   result.created_at,
-        //   result.updated_at 
-        // )
-        // )
 
         const resultPost = resultPosts.map((item)=>{
             return {
@@ -154,44 +110,26 @@ export class PostBusiness{
            return {id: resultTable?.id, 
         name: resultTable?.name}
         }
-        
-
-
        
         return ({Post: resultPost})
     }
 
-    public updatePost = async (input: any, idParams: any)=>{
+    public updatePost = async (input: EditPostInputDTO )=>{
        
     
-        const { id, creator_id, content, likes, dislikes, created_at, updated_at } = input
+        const { idParams, content, token } = input
+
+
+        if(token === undefined){
+            throw new BadRequestError("token ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+
+        if(payload === null){
+            throw new BadRequestError("token inválido")
+        }
        
-
-        if (id !== undefined) {
-
-            if (typeof id !== "string") {
-                throw new BadRequestError("'id' deve ser string")
-            }
-
-            if (id.length < 1) {
-                throw new BadRequestError("'id' deve possuir no mínimo 1 caractere")
-            }
-        }
-
-        if (creator_id !== undefined) {
-
-            if (typeof creator_id !== "string") {
-                throw new BadRequestError("'creator_id' deve ser string")
-            }
-        }
-
-        if (likes !== undefined) {
-
-            if (typeof likes !== "number") {
-                throw new BadRequestError("'likes' deve ser number")
-            }
-        }
-        
 
         if (content !== undefined) {
 
@@ -204,65 +142,66 @@ export class PostBusiness{
             }
         }
 
-        if (dislikes !== undefined) {
-
-            if (typeof dislikes !== "number") {
-                throw new BadRequestError("'dislikes' deve ser number")
-            }
-        }
        
-        const postDataBase = new PostDataBase()
-
-        const post = await postDataBase.findPostId(idParams)
+        const post: Post | undefined = await this.postDataBase.findPostId(idParams)
        
 
         if (!post) {
         throw new BadRequestError("'id' não encontrada")
+        }
         
+        if(post.getId() !== payload.id){
+        throw new BadRequestError("somente quem criou o post, pode editar")
+
         }else {
        
 
             const postInstance = new Post(
-                id,
-                creator_id,
-                content,
-                likes,
-                dislikes,
-                created_at,
-                updated_at
+                this.idGenerator.generate(),
+                payload.id,
+                post.getContent(),
+                0,
+                0,
+                new Date().toISOString(),
+                new Date().toISOString()
             )
 
 
-            const updatePosts: TPosts = {
-                id: id || postInstance.getId(),
-                creator_id: creator_id ||postInstance.getCreatorId(),
-                likes: isNaN(likes) ? postInstance.getLikes(): likes,
-                content: content || postInstance.getContent(),
-                dislikes: isNaN(dislikes) ? postInstance.getDislikes() : dislikes,
-                created_at: created_at || postInstance.getCreatedAt(),
-                updated_at: updated_at || postInstance.getUpdateAt()
-            }
+            // const updatePosts: TPosts = {
+            //     id: id || postInstance.getId(),
+            //     creator_id: creator_id ||postInstance.getCreatorId(),
+            //     likes: isNaN(likes) ? postInstance.getLikes(): likes,
+            //     content: content || postInstance.getContent(),
+            //     dislikes: isNaN(dislikes) ? postInstance.getDislikes() : dislikes,
+            //     created_at: created_at || postInstance.getCreatedAt(),
+            //     updated_at: updated_at || postInstance.getUpdateAt()
+            // }
         
-console.log(idParams);
 
-        await postDataBase.findUpdatePost({id, creator_id, 
-        likes, content, dislikes, created_at, updated_at} as TPosts , idParams)
 
-        const output ={
-            message: "Post atualizado com sucesso",
-            Post: updatePosts.content
-        }
+        // await postDataBase.findUpdatePost({id, creator_id, 
+        // likes, content, dislikes, created_at, updated_at} as TPosts , idParams)
 
-        return (output)
+
     }}
 
-    public deletePost = async (id: string)=>{
-        const postDataBase = new PostDataBase()
-   
-        const post = await postDataBase.findPostId(id)
+    public deletePost = async (input: DeletePostInputDTO): Promise<void>=>{
 
-        console.log(post);
-        
+        const { id, token } = input
+     
+
+        if(token === undefined){
+            throw new BadRequestError("token ausente")
+        }
+
+        const payload = this.tokenManager.getPayload(token)
+
+        if(payload === null){
+            throw new BadRequestError("token inválido")
+        }
+       
+        const post = await this.postDataBase.findPostId(id)
+
 
         if (!post) {
             throw new BadRequestError("id não encontrada")
@@ -278,26 +217,20 @@ console.log(idParams);
             post.updated_at
         )
 
-        await postDataBase.deletePostId(deletePost.getId())
+        await this.postDataBase.deletePostId(deletePost.getId())
 
-        const output ={
-            message: "Post deletado com sucesso",
-            Post: deletePost
-        }
-
-        return (output)
     }
 
-    public updatePostId = async (input: any)=>{
-        const { likes, dislikes } = input
+    // public updatePostId = async (input: any)=>{
+    //     const { likes, dislikes } = input
            
     
-        if (likes !== undefined) {
+    //     if (likes !== undefined) {
 
-            if (typeof likes !== "number") {
-                throw new BadRequestError("'likes' deve ser number")
-            }
-        }
+    //         if (typeof likes !== "number") {
+    //             throw new BadRequestError("'likes' deve ser number")
+    //         }
+    //     }
         
 
         // if (dislikes !== undefined) {
@@ -321,5 +254,5 @@ console.log(idParams);
         // } else {
         //     throw new BadRequestErro("'id' não encontrada")
         // }
-    }
+    // }
 }

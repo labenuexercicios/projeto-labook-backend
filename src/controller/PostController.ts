@@ -1,29 +1,27 @@
 import { Request, Response } from "express";
 import { PostBusiness } from "../business/PostBusiness";
 import { PostDataBase } from "../database/PostDataBase";
+import { CreatePostDTO, DeletePostInputDTO, EditPostInputDTO, GetPostInputDTO, GetPostOutputDTO } from "../dto/userDTO";
 import { BaseError } from "../errors/BaseErrors";
 import { Post } from "../models/Post";
 import { TPosts, TPostsLike } from "../models/types";
 
 export class PostController {
+    constructor(
+        private postBusiness : PostBusiness
+    ){}
     public createPost =  async (req: Request, res: Response) => {
         try {
             
-            const input =  {
-                id: req.body.id,
-                creator_id: req.body.creator_id,
-                content: req.body.content,
-                likes: req.body.likes,
-                dislikes: req.body.dislikes
+            const input : CreatePostDTO =  {
+                token: req.headers.authorization,
+                content: req.body.content
             }
 
-            const userBusiness = new PostBusiness()
-            const output = await userBusiness.createPost(input)
-
-            console.log(output);
             
+            await this.postBusiness.createPost(input)
           
-            res.status(201).send(output)
+            res.status(201).end()
     
         } catch (error: any) {
             console.log(error)
@@ -39,11 +37,13 @@ export class PostController {
 
     public getPost = async (req: Request, res: Response) => {
         try {
+            const input : GetPostInputDTO = {
+                token: req.headers.authorization
+            }
     
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.getPost()
+            // const output   = await this.postBusiness.getPost(input)
     
-            res.status(200).send(output)
+            // res.status(200).send(output)
         }
         catch (error: any) {
             console.log(error)
@@ -59,22 +59,19 @@ export class PostController {
 
     public updatePost = async (req: Request, res: Response) => {
         try {
-            const idParams = req.params.id 
             
             
-            const input =  {
-                id: req.body.id,
-                creator_id: req.body.creator_id,
+            const input : EditPostInputDTO =  {
+                idParams: req.params.id,
                 content: req.body.content,
-                likes: req.body.likes,
-                dislikes: req.body.dislikes
+                token: req.headers.authorization
             }
 
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.updatePost(input, idParams)
+          
+            await this.postBusiness.updatePost(input)
           
 
-            res.status(200).send(output)
+            res.status(200).end()
             } 
             catch (error) {
             console.log(error)
@@ -94,12 +91,15 @@ export class PostController {
 
     public deletePost = async (req: Request, res: Response) => {
         try {
-            const id = req.params.id
 
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.deletePost(id)
+            const input : DeletePostInputDTO = {
+                id: req.params.id,
+                token: req.headers.authorization
+            }
+            
+            const output = await this.postBusiness.deletePost(input)
            
-            res.status(200).send(output)
+            res.status(200).end()
     
         } catch (error) {
             console.log(error)
@@ -113,32 +113,32 @@ export class PostController {
         }
     }
 
-    public updatePostId = async (req: Request, res: Response) => {
-        try {
-            const idParams = req.params.id 
+//     public updatePostId = async (req: Request, res: Response) => {
+//         try {
+//             const idParams = req.params.id 
 
-            const input = {
-                id: req.body.id,
-                creator_id: req.body.creator_id,
-                content: req.body.content,
-                likes: req.body.likes,
-                dislikes: req.body.dislikes
-            }
+//             const input = {
+//                 id: req.body.id,
+//                 creator_id: req.body.creator_id,
+//                 content: req.body.content,
+//                 likes: req.body.likes,
+//                 dislikes: req.body.dislikes
+//             }
 
-            const postBusiness = new PostBusiness()
-            const output = await postBusiness.updatePostId(input)
+          
+//             const output = await this.postBusiness.updatePostId(input)
     
           
-            res.status(200).send("Post atualizado com sucesso")
-            }catch (error) {
-            console.log(error)
+//             res.status(200).send("Post atualizado com sucesso")
+//             }catch (error) {
+//             console.log(error)
     
-            if (error instanceof BaseError) {
-                res.status(error.statusCode)
-                .send(error.message)
-            }else{
-                res.send("Erro inesperado")
-            }
-        }
-    }
+//             if (error instanceof BaseError) {
+//                 res.status(error.statusCode)
+//                 .send(error.message)
+//             }else{
+//                 res.send("Erro inesperado")
+//             }
+//         }
+//     }
 }
