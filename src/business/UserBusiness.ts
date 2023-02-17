@@ -1,23 +1,28 @@
 import { UserDataBase } from "../database/UserDataBase";
+import { LoginInputDTO, LoginOutputDTO, SignupInputDTO, SignupOutputDTO } from "../dto/userDTO";
 import { BadRequestError } from "../errors/BadRequestError";
-import { TUser } from "../models/types";
+import { TokenPayload, TUser } from "../models/types";
 import { User } from "../models/User";
+import {USER_ROLES} from "../models/types"
+import { IdGenerator } from "../services/idGenerator";
+import { TokenManager } from "../services/TokenManager";
+import { HashManager } from "../services/HashManager";
 
 export class UserBusiness {
-    public createUsers = async (input:any) => {
+    constructor(
+        private userDataBase: UserDataBase,
+        private idGenerator: IdGenerator,
+        private tokenManager: TokenManager,
+        private hashManager: HashManager
+    ){}
+    public createUsers = async (input: SignupInputDTO): Promise<SignupOutputDTO> => {
     
-            const { id, name, email, password, role, created_at } = input
+            const {  name, email, password } = input
     
-            if (!id || !name || !email || !password || !role) {
+            if ( !name || !email || !password ) {
                 throw new BadRequestError("Dados inválidos")
             }
     
-            if (id !== undefined) {
-    
-                if (typeof id !== "string") {
-                    throw new BadRequestError("'id' deve ser string")
-                   }
-                }
             if (name !== undefined) {
     
                 if (typeof name !== "string") {
@@ -38,24 +43,9 @@ export class UserBusiness {
                     }
                 }
             
-            if (role !== undefined) {
-    
-                 if (typeof role !== "string") {  
-                    throw new BadRequestError("'role' deve ser string")
-                    }
-                }
     
     
-            const userDataBase = new UserDataBase()
-    
-            const userExists = await userDataBase.findPostUser(id)
-    
-    
-            if (userExists) {
-                throw new BadRequestError("'id' do usuário já existente");
-            }
-    
-            const emailExists = await userDataBase.findPostUserEmail(email)
+            const emailExists = await this.userDataBase.findPostUserEmail(email)
     
             if (emailExists) {
                 throw new BadRequestError("'email' do usuário já existe")
@@ -66,37 +56,40 @@ export class UserBusiness {
             }
     
             const userInstance = new User(
-                id,
+                this.idGenerator.generate(),
                 name,
                 email,
                 password,
-                role,
+                USER_ROLES.USUARIO,
                 new Date().toISOString()
             )
     
     
-            const newUser: TUser = {
+            const newUser : TUser =  {
                 id: userInstance.getId(),
                 name: userInstance.getName(),
                 email: userInstance.getEmail(),
                 password: userInstance.getPassword(),
                 role: userInstance.getRole(),
                 created_at: userInstance.getCreatedAt()
-            }
-    
-            await userDataBase.insertPostUser(newUser)
 
-            const output ={
-                message: "Cadastro realizado com sucesso",
-                user: userInstance
+            }
+            
+    
+            await this.userDataBase.insertPostUser(newUser)
+
+            const token = this.tokenManager.createToken(newUser)
+
+            const output : SignupOutputDTO={
+                token: token
             }
 
             return (output)
     }
 
-    public createUsersLogin = async (input: any) => {
+    public createUsersLogin = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
         
-        const { email, password} = input;
+        const { email, password} = input
     
             if ( !email || !password ) {
                 throw new BadRequestError("Dados inválidos")
@@ -118,9 +111,8 @@ export class UserBusiness {
                     }
                 }
             
-                const userDataBase = new UserDataBase()
                 
-                const emailExists = await userDataBase.findPostUserEmail(email)
+                const emailExists: TUser | undefined = await this.userDataBase.findPostUserEmail(email)
     
                 if (!emailExists) {
                     throw new BadRequestError("email incorreto")
@@ -130,38 +122,65 @@ export class UserBusiness {
                     throw new BadRequestError("Parâmetro 'email' inválido")
                 }
     
-               const passwordExists = await userDataBase.findPostUserPassword(password)
+               const passwordExists = await this.userDataBase.findPostUserPassword(password)
     
                 if (!passwordExists) {
                 throw new BadRequestError("Senha incorreta");
                 }
             
     
-            const userInstance = {
-                email,
-                password,    
-            }
-
+            // const userInstance : LoginInputDTO = {
+            //     email,
+            //     password,    
+            // }
 
             // const newUser: TUser = {  
             //     email: userInstance.getEmail(),
             //     password: userInstance.getPassword(),
             // }
-    
-            // await userDataBase.findGetUsers(newUser)
 
-            const output ={
-                message: "Login realizado com sucesso",
-                user: userInstance
+            const userInstance = new User(
+                passwordExists.id,
+                passwordExists.name,
+                passwordExists.email,
+                passwordExists.password,
+                passwordExists.role,
+                passwordExists.created_at
+            )
+    
+            const hashedPassaword = userInstance.getPassword()
+
+            
+            const passwordCorrect = await this.hashManager
+            .compare(password, hashedPassaword)
+            console.log(password);
+            
+            console.log(hashedPassaword);
+            console.log(passwordCorrect)
+            if(passwordCorrect == true){
+                throw new BadRequestError("Password incorreto")
+            }
+            
+            const newUser: TokenPayload = {
+                id: userInstance.getId(),
+                name: userInstance.getName(),
+                role: userInstance.getRole()
+            }
+
+            const token = this.tokenManager.createToken(newUser)
+    
+
+            const output : LoginOutputDTO ={
+               token
             }
 
             return (output)
     }
 
     public getUsers = async () => {
-        const userDataBase = new UserDataBase()
+        
     
-           const result = await userDataBase.findGetUsers()
+           const result = await this.userDataBase.findGetUsers()
     
             const users: User[] = result.map((result)=>
             new User(

@@ -11,7 +11,7 @@ export interface SignupOutputDTO {
     token: string
 }
 
-export interface LoginInputDTO {   
+export interface LoginInputDTO {  
     email: unknown,
     password: unknown
 }
@@ -21,7 +21,7 @@ export interface LoginOutputDTO {
 }
 
 export interface GetPostInputDTO {
-    token: string
+    token: string | undefined
 }
 
 export type GetPostOutputDTO = GetPostDB[]
@@ -32,13 +32,13 @@ export interface CreatePostDTO {
 }
 
 export interface EditPostInputDTO {
-    idEdit: string,
+    idParams: string,
     token: string | undefined,
     content: unknown
 }
 
 export interface DeletePostInputDTO {
-    idDelete: string,
+    id: string,
     token: string | undefined
 }
 

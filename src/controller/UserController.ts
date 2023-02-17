@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { UserBusiness } from "../business/UserBusiness";
 import { UserDataBase } from "../database/UserDataBase";
-import { SignupInputDTO } from "../dto/userDTO";
+import { LoginInputDTO, LoginOutputDTO, SignupInputDTO, SignupOutputDTO } from "../dto/userDTO";
 import { BaseError } from "../errors/BaseErrors";
 import { TUser } from "../models/types";
 import { User } from "../models/User";
@@ -9,6 +9,9 @@ import { User } from "../models/User";
 
 
 export class UserController {
+    constructor(
+      private userBusiness: UserBusiness
+    ){}
     public createUsers = async (req: Request, res: Response) => {
     try{
         const input : SignupInputDTO = {
@@ -17,8 +20,7 @@ export class UserController {
             password: req.body.password, 
         }
 
-        const userBusiness = new UserBusiness()
-        const output = await userBusiness.createUsers(input)
+        const output : SignupOutputDTO = await this.userBusiness.createUsers(input)
      
             res.status(201).send(output)
     
@@ -38,19 +40,15 @@ export class UserController {
 
         try {
     
-            const input = {
-                id: req.body.id,
-                name: req.body.name,
+            const input : LoginInputDTO = {     
                 email: req.body.email,
-                password: req.body.password,
-                role: req.body.role,
-                created_ad: req.body.role
+                password: req.body.password,   
             }
     
-            const userBusiness = new UserBusiness()
-            const output = await userBusiness.createUsersLogin(input)
             
-            res.status(201).send(output)
+            const output : LoginOutputDTO = await this.userBusiness.createUsersLogin(input)
+            
+            res.status(200).send(output)
     
             }catch (error: any) {
             console.log(error)
@@ -67,8 +65,8 @@ export class UserController {
     public getUsers = async (req: Request, res: Response) => {
         try {
     
-            const userBusiness = new UserBusiness()
-            const output = await userBusiness.getUsers()
+            
+            const output = await this.userBusiness.getUsers()
     
             res.status(200).send(output)
     
