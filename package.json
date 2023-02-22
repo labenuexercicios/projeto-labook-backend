@@ -20,17 +20,23 @@
   },
   "homepage": "https://github.com/gustavojb1/projeto-labook-backend#readme",
   "devDependencies": {
+    "@types/bcryptjs": "^2.4.2",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/uuid": "^9.0.0",
     "typescript": "^4.9.5"
   },
   "dependencies": {
     "@types/cors": "^2.8.13",
     "@types/express": "^4.17.17",
     "@types/knex": "^0.16.1",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",
     "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
     "knex": "^2.4.2",
     "sqlite3": "^5.1.4",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "uuid": "^9.0.0"
   }
 }
