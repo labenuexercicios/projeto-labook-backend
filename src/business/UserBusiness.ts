@@ -42,7 +42,7 @@ export class UserBusiness {
       name,
       email,
       hashedPassword,
-      USER_ROLES.NORMAL,
+      USER_ROLES.ADMIN,
       new Date().toISOString()
     );
     const userDB = newUser.toDBModel();

@@ -101,3 +101,6 @@ SELECT
 FROM posts
 JOIN users 
 ON posts.creator_id = users.id;
+
+SELECT * FROM posts;
+

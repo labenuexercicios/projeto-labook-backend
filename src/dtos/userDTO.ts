@@ -32,12 +32,13 @@ export type GetPostsOutputDTO = PostModel[];
 
 export interface CreatePostInputDTO {
   token: string | undefined;
+  content: unknown
 }
 
 export interface EditPostInputDTO {
   idToEdit: string;
   token: string | undefined;
-  name: unknown;
+  content: unknown;
 }
 
 export interface DeletePostInputDTO {

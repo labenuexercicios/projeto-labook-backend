@@ -1,4 +1,4 @@
-import { PostWithCreatorsDB, UserDB } from "../interfaces/types";
+import { PostDB, PostWithCreatorsDB, UserDB } from "../interfaces/types";
 import { BaseDataBase } from "./BaseDataBase";
 
 export class PostDataBase extends BaseDataBase {
@@ -18,7 +18,30 @@ export class PostDataBase extends BaseDataBase {
         "posts.updated_at",
         "users.name AS creator_name"
       )
-      .join("users","posts.creator_id", "=", "users.id");
+      .join("users", "posts.creator_id", "=", "users.id");
     return result;
+  };
+
+  public insert = async (postDB: PostDB): Promise<void> => {
+    await BaseDataBase.connection(PostDataBase.TABLE_POSTS).insert(postDB);
+  };
+
+  public findById = async (id: string): Promise<PostDB | undefined> => {
+    const result: PostDB[] = await BaseDataBase.connection(
+      PostDataBase.TABLE_POSTS
+    )
+      .select()
+      .where({ id });
+    return result[0];
+  };
+  public update = async (id: string, postDB: PostDB): Promise<void> => {
+    await BaseDataBase.connection(PostDataBase.TABLE_POSTS)
+      .update(postDB)
+      .where({ id });
+  };
+  public delete = async (id: string): Promise<void> => {
+    await BaseDataBase.connection(PostDataBase.TABLE_POSTS)
+      .delete()
+      .where({ id });
   };
 }
