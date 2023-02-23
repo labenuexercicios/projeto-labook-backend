@@ -1,3 +1,4 @@
+import { Post } from "../models/Post";
 import { TPosts } from "../models/types";
 import { BaseDatabase } from "./BaseDataBase";
 
@@ -30,22 +31,21 @@ export class PostDataBase extends BaseDatabase{
     }
 
 
-    public async findPostId(idParams: string){
-        const [post] = await BaseDatabase
-       .conection(PostDataBase.TABLE_POSTS)
+    public async findPostId(idParams: string):Promise<TPosts | undefined>{
+        const post: TPosts[] = await BaseDatabase
+       .conection(PostDataBase.TABLE_POSTS).select()
        .where({ id: idParams })
 
 
-    return post
+    return post[0]
     }
 
 
-    public async findUpdatePost(updatePost: TPosts, id: string){
+    public async findUpdatePost(updatePost: TPosts, id: string):Promise<void>{
         await BaseDatabase
         .conection(PostDataBase.TABLE_POSTS)
         .update(updatePost)
         .where({id: id})
-        console.log("estou aqui",id);
     }
     
 

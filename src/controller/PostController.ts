@@ -41,9 +41,9 @@ export class PostController {
                 token: req.headers.authorization
             }
     
-            // const output   = await this.postBusiness.getPost(input)
+            const output   = await this.postBusiness.getPost(input)
     
-            // res.status(200).send(output)
+            res.status(200).send(output)
         }
         catch (error: any) {
             console.log(error)

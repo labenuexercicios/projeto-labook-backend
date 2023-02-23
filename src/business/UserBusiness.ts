@@ -129,15 +129,6 @@ export class UserBusiness {
                 }
             
     
-            // const userInstance : LoginInputDTO = {
-            //     email,
-            //     password,    
-            // }
-
-            // const newUser: TUser = {  
-            //     email: userInstance.getEmail(),
-            //     password: userInstance.getPassword(),
-            // }
 
             const userInstance = new User(
                 passwordExists.id,
@@ -151,13 +142,11 @@ export class UserBusiness {
             const hashedPassaword = userInstance.getPassword()
 
             
-            const passwordCorrect = await this.hashManager
+            await this.hashManager
             .compare(password, hashedPassaword)
-            console.log(password);
             
-            console.log(hashedPassaword);
-            console.log(passwordCorrect)
-            if(passwordCorrect == true){
+
+            if(password !== hashedPassaword){
                 throw new BadRequestError("Password incorreto")
             }
             

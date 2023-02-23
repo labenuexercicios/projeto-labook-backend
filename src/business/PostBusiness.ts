@@ -24,6 +24,7 @@ export class PostBusiness{
         }
 
         const payload = this.tokenManager.getPayload(token)
+        
 
         if(payload === null){
             throw new BadRequestError("token inválido")
@@ -37,11 +38,12 @@ export class PostBusiness{
                 }
             }
 
+        const postagem = content as string 
 
         const postIntance = new Post(
             this.idGenerator.generate(),
             payload.id,
-            payload.name,
+            postagem,
             0,
             0,
             new Date().toISOString(),
@@ -102,7 +104,7 @@ export class PostBusiness{
 
         function resultado (item: string){
            const resultTable = resultUsers.find((result)=>{
-            console.log(result);
+            
             return item === result.id
 
            })
@@ -114,10 +116,10 @@ export class PostBusiness{
         return ({Post: resultPost})
     }
 
-    public updatePost = async (input: EditPostInputDTO )=>{
+    public updatePost = async (input: EditPostInputDTO ):Promise<void>=>{
        
     
-        const { idParams, content, token } = input
+        const { idParams, content, token } = input 
 
 
         if(token === undefined){
@@ -143,44 +145,46 @@ export class PostBusiness{
         }
 
        
-        const post: Post | undefined = await this.postDataBase.findPostId(idParams)
+        const post = await this.postDataBase.findPostId(idParams)
        
 
         if (!post) {
         throw new BadRequestError("'id' não encontrada")
         }
         
-        if(post.getId() !== payload.id){
+        if(post.creator_id !== payload.id){
         throw new BadRequestError("somente quem criou o post, pode editar")
 
+    
+        
         }else {
        
 
             const postInstance = new Post(
-                this.idGenerator.generate(),
-                payload.id,
-                post.getContent(),
-                0,
-                0,
-                new Date().toISOString(),
-                new Date().toISOString()
+               post.id,
+               post.creator_id,
+               post.content,
+               post.likes,
+               post.dislikes,
+               post.created_at,
+               post.updated_at
             )
 
 
-            // const updatePosts: TPosts = {
-            //     id: id || postInstance.getId(),
-            //     creator_id: creator_id ||postInstance.getCreatorId(),
-            //     likes: isNaN(likes) ? postInstance.getLikes(): likes,
-            //     content: content || postInstance.getContent(),
-            //     dislikes: isNaN(dislikes) ? postInstance.getDislikes() : dislikes,
-            //     created_at: created_at || postInstance.getCreatedAt(),
-            //     updated_at: updated_at || postInstance.getUpdateAt()
-            // }
+
+            const updatePosts: TPosts  = {
+                id: postInstance.getId(),
+                creator_id:  postInstance.getCreatorId(),
+                likes:  postInstance.getLikes(),
+                content: content || postInstance.getContent(),
+                dislikes: postInstance.getDislikes(),
+                created_at: postInstance.getCreatedAt(),
+                updated_at: postInstance.getUpdateAt()
+            }
+        
         
 
-
-        // await postDataBase.findUpdatePost({id, creator_id, 
-        // likes, content, dislikes, created_at, updated_at} as TPosts , idParams)
+        await this.postDataBase.findUpdatePost(updatePosts, idParams)
 
 
     }}
