@@ -1,10 +1,11 @@
-import { PostDB, PostWithCreatorsDB, UserDB } from "../interfaces/types";
+import { LikesDislikesDB, PostDB, PostWithCreatorsDB, UserDB } from "../interfaces/types";
 import { BaseDataBase } from "./BaseDataBase";
 
 export class PostDataBase extends BaseDataBase {
   public static TABLE_POSTS = "posts";
+  public static TABLE_LIKES_DISLIKES = "likes_dislikes"
 
-  public getPostsWithCreators = async () => {
+  public getPostsWithCreators = async (): Promise<PostWithCreatorsDB[]> => {
     const result: PostWithCreatorsDB[] = await BaseDataBase.connection(
       PostDataBase.TABLE_POSTS
     )
@@ -43,5 +44,27 @@ export class PostDataBase extends BaseDataBase {
     await BaseDataBase.connection(PostDataBase.TABLE_POSTS)
       .delete()
       .where({ id });
+  };
+  public likeOrDislikePost = async (likeDislike: LikesDislikesDB): Promise<void> => {
+    await BaseDataBase.connection(PostDataBase.TABLE_LIKES_DISLIKES)
+      .insert(likeDislike)
+  };
+  public findPostsWithCreatorById = async (postId: string): Promise<PostWithCreatorsDB | undefined> => {
+    const result: PostWithCreatorsDB[] = await BaseDataBase.connection(
+      PostDataBase.TABLE_POSTS
+    )
+      .select(
+        "posts.id",
+        "posts.creator_id",
+        "posts.content",
+        "posts.likes",
+        "posts.dislikes",
+        "posts.created_at",
+        "posts.updated_at",
+        "users.name AS creator_name"
+      )
+      .join("users", "posts.creator_id", "=", "users.id")
+      .where('posts.id', postId)
+    return result[0]
   };
 }

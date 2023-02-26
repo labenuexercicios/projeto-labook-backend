@@ -5,10 +5,11 @@ import {
   EditPostInputDTO,
   GetPostsInputDTO,
   GetPostsOutputDTO,
+  LikeOrDislikePostInputDTO,
 } from "../dtos/userDTO";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
-import { PostDB, PostWithCreatorsDB, USER_ROLES } from "../interfaces/types";
+import { LikesDislikesDB, PostDB, PostWithCreatorsDB, USER_ROLES } from "../interfaces/types";
 import { Post } from "../models/Post";
 import { HashManager } from "../services/HashManager";
 import { IdGenerator } from "../services/IdGenerator";
@@ -173,5 +174,58 @@ export class PostBusiness {
     }
 
     await this.postDataBase.delete(idToDelete);
+  };
+  public likeOrDislikePost = async (input: LikeOrDislikePostInputDTO): Promise<void> => {
+    const { idToLikeOrDislike, token, like } = input;
+
+    if (token === undefined) {
+      throw new BadRequestError("'token' ausente");
+    }
+
+    const payload = this.tokenManager.getPayload(token);
+
+    if (payload === null) {
+      throw new BadRequestError("Token inválido");
+    }
+
+    if(typeof like !== "boolean") {
+      throw new BadRequestError("'like' deve ser boolean")
+    }
+
+    const postsWithCreatorDB = await this.postDataBase.findPostsWithCreatorById(idToLikeOrDislike);
+
+    if (!postsWithCreatorDB) {
+      throw new NotFoundError("'id' não encontrado");
+    }
+
+    const userId = payload.id;
+    const likeSQLite = like ? 1 : 0 
+    const likeDislikeDB: LikesDislikesDB = {
+      user_id: userId,
+      post_id: postsWithCreatorDB.id,
+      like: likeSQLite
+    }
+
+    await this.postDataBase.likeOrDislikePost(likeDislikeDB);
+
+    const post = new Post(
+      postsWithCreatorDB.id,
+      postsWithCreatorDB.content,
+      postsWithCreatorDB.likes,
+      postsWithCreatorDB.dislikes,
+      postsWithCreatorDB.created_at,
+      postsWithCreatorDB.updated_at,
+      postsWithCreatorDB.creator_id,
+      postsWithCreatorDB.creator_name
+    );
+
+    if(like) {
+      post.addLike()
+    } else {
+      post.addDislike()
+    }
+
+    const updatedPostDB = post.toDBModel()
+    await this.postDataBase.update(idToLikeOrDislike, updatedPostDB)
   };
 }
