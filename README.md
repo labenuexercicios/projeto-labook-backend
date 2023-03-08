@@ -42,6 +42,10 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
     - [ ]  Arquitetura em camadas
     - [ ]  Roteadores no Express
 
+- Documentação Postman
+
+- README.md
+
 # Exemplos de requisição
 
 ## Signup
