@@ -23,6 +23,8 @@ Agora que temos as bases de criação de APIs e banco de dados, o próximo níve
 https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
 # Lista de requisitos
+- Documentação Postman de todos os endpoints (obrigatória para correção)
+
 - Endpoints
     - [ ]  signup
     - [ ]  login
@@ -41,8 +43,6 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
     - [ ]  POO
     - [ ]  Arquitetura em camadas
     - [ ]  Roteadores no Express
-
-- Documentação Postman
 
 - README.md
 
