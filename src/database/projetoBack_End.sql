@@ -1,4 +1,4 @@
--- Active: 1682949688943@@127.0.0.1@3306
+-- Active: 1683035450919@@127.0.0.1@3306
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
@@ -32,3 +32,10 @@ SELECT * FROM users;
 SELECT * FROM posts;
 
 SELECT * FROM likes_dislikes;
+
+DROP TABLE likes_dislikes;
+
+INSERT INTO users (id, name, email, password)
+VALUES ("u001", "Michelle Antunes", "michelle@email.com", "paswword123");
+INSERT INTO posts (id, content, likes, dislikes,creator_id)
+VALUES ("p001", "Hoje vamos estudar muito!", 1, 0, "u001");
