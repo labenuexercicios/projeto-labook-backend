@@ -1,0 +1,8 @@
+-- Active: 1683307575695@@127.0.0.1@3306
+CREATE TABLE IF NOT EXISTS videos (
+    id TEXT UNIQUE PRIMARY KEY,
+    titulo TEXT NOT NULL,
+    duracao INTEGER NOT NULL,
+    dataUpload TIMESTAMP NOT NULL
+);
+
