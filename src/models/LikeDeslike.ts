@@ -1,26 +1,42 @@
+import { LikeDeslikeDB, LikeDeslikeModel } from "../types";
+
 export class LikeDeslike {
   constructor(
-    private user_id: string,
-    private post_id: string,
+    private userId: string,
+    private postId: string,
     private like: number
   ) {}
 
   public getUserId(): string {
-    return this.user_id;
+    return this.userId;
   }
   public setUserId(value: string): void {
-    this.user_id = value;
+    this.userId = value;
   }
   public getPostId(): string {
-    return this.post_id;
+    return this.postId;
   }
   public setPostId(value: string): void {
-    this.post_id = value;
+    this.postId = value;
   }
   public getLike(): number {
     return this.like;
   }
   public setLike(value: number): void {
     this.like = value;
+  }
+  public toBusinessModel(): LikeDeslikeModel {
+    return {
+      userId: this.userId,
+      postId: this.postId,
+      like: this.like,
+    };
+  }
+  public toDBModel(): LikeDeslikeDB {
+    return {
+      user_id: this.userId,
+      post_id: this.postId,
+      like: this.like,
+    };
   }
 }

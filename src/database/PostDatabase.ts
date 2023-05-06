@@ -4,11 +4,23 @@ import { BaseDatabase } from "./BaseDatabase";
 export class PostDatabase extends BaseDatabase {
   public static TABLE_POST = "posts";
 
-  public async findePosts() {
-    const postsDB: PostDB[] = await BaseDatabase.connection(
-      PostDatabase.TABLE_POST
-    );
-    return postsDB;
+  public async findePosts(q: string | undefined) {
+    let postDB;
+    if (q) {
+      const result: PostDB[] = await BaseDatabase.connection(
+        PostDatabase.TABLE_POST
+      ).where("name", "LIKE", `%${q}%`);
+
+      postDB = result;
+    } else {
+      const result: PostDB[] = await BaseDatabase.connection(
+        PostDatabase.TABLE_POST
+      );
+
+      postDB = result;
+    }
+
+    return postDB;
   }
   public async findPostById(id: string) {
     const [postsDB]: PostDB[] | undefined[] = await BaseDatabase.connection(

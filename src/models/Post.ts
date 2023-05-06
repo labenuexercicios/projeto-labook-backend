@@ -1,12 +1,14 @@
+import { PostDB, PostModel } from "../types";
+
 export class Post {
   constructor(
     private id: string,
     private content: string,
     private likes: number,
     private deslikes: number,
-    private created_at: string,
-    private updated_at: string,
-    private creator_id: string
+    private createdAt: string,
+    private updatedAt: string,
+    private creatorId: string
   ) {}
 
   public getId(): string {
@@ -34,21 +36,43 @@ export class Post {
     this.deslikes = value;
   }
   public getCreatedAt(): string {
-    return this.created_at;
+    return this.createdAt;
   }
   public setCreatedAt(value: string): void {
-    this.created_at = value;
+    this.createdAt = value;
   }
   public getUpdateAt(): string {
-    return this.updated_at;
+    return this.updatedAt;
   }
   public setUpdateAt(value: string): void {
-    this.updated_at = value;
+    this.updatedAt = value;
   }
   public getCreatorId(): string {
-    return this.creator_id;
+    return this.creatorId;
   }
   public setCreatorId(value: string): void {
-    this.creator_id = value;
+    this.creatorId = value;
+  }
+  public toBusinessModel(): PostModel {
+    return {
+      id: this.id,
+      content: this.content,
+      likes: this.likes,
+      deslikes: this.deslikes,
+      createdAt: this.createdAt,
+      updatedAt: this.updatedAt,
+      creatorId: this.creatorId,
+    };
+  }
+  public toDBModel(): PostDB {
+    return {
+      id: this.id,
+      content: this.content,
+      likes: this.likes,
+      deslikes: this.deslikes,
+      created_at: this.createdAt,
+      updated_at: this.updatedAt,
+      creator_id: this.creatorId,
+    };
   }
 }

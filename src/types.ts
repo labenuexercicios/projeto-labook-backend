@@ -15,8 +15,32 @@ export interface UserDB {
   created_at: string;
 }
 
+export interface PostModel {
+  id: string;
+  content: string;
+  likes: number;
+  deslikes: number;
+  createdAt: string;
+  updatedAt: string;
+  creatorId: string;
+}
+export interface UserModel {
+  id: string;
+  name: string;
+  email: string;
+  createdAt: string;
+}
 export interface LikeDeslikeDB {
   user_id: string;
   post_id: string;
   like: number;
+}
+export interface LikeDeslikeModel {
+  userId: string;
+  postId: string;
+  like: number;
+}
+export interface TokenPayload {
+  id: string;
+  name: string;
 }

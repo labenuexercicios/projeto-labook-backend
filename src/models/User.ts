@@ -1,10 +1,12 @@
+import { UserDB, UserModel } from "../types";
+
 export class User {
   constructor(
     private id: string,
     private name: string,
     private email: string,
     private password: string,
-    private created_at: string
+    private createdAt: string
   ) {}
 
   public getId(): string {
@@ -32,9 +34,26 @@ export class User {
     this.password = value;
   }
   public getCreatedAt(): string {
-    return this.created_at;
+    return this.createdAt;
   }
   public setCreatedAt(value: string): void {
-    this.created_at = value;
+    this.createdAt = value;
+  }
+  public toDBModel(): UserDB {
+    return {
+      id: this.id,
+      name: this.name,
+      email: this.email,
+      password: this.password,
+      created_at: this.createdAt,
+    };
+  }
+  public toBusinessModel(): UserModel {
+    return {
+      id: this.id,
+      name: this.name,
+      email: this.email,
+      createdAt: this.createdAt,
+    };
   }
 }
