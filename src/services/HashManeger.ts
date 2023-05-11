@@ -16,7 +16,6 @@ export class HashManager {
     plaintext: string,
     hash: string
   ): Promise<boolean> => {
-    // aqui não precisa do await porque o return já se comporta como um
     return bcrypt.compare(plaintext, hash);
   };
 }

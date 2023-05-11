@@ -1,36 +1,12 @@
 import { Request, Response } from "express";
-import { UserBusiness } from "../business/UserBusiness";
-import { BaseError } from "../errors/BaseError";
-import { GetUsersSchema } from "../dtos/User/getUser.dto";
 import { ZodError } from "zod";
-import { SignupSchema } from "../dtos/User/signup.dto";
+import { UserBusiness } from "../business/UserBusiness";
 import { LoginSchema } from "../dtos/User/login.dto";
+import { SignupSchema } from "../dtos/User/signup.dto";
+import { BaseError } from "../errors/BaseError";
 
 export class UserController {
   constructor(private userBusiness: UserBusiness) {}
-
-  public getUsers = async (req: Request, res: Response) => {
-    try {
-      const input = GetUsersSchema.parse({
-        q: req.query.q,
-        token: req.headers.authorization,
-      });
-
-      const output = await this.userBusiness.getUsers(input);
-
-      res.status(200).send(output);
-    } catch (error) {
-      console.log(error);
-
-      if (error instanceof ZodError) {
-        res.status(400).send(error.issues);
-      } else if (error instanceof BaseError) {
-        res.status(error.statusCode).send(error.message);
-      } else {
-        res.status(500).send("Erro inesperado");
-      }
-    }
-  };
 
   public signup = async (req: Request, res: Response) => {
     try {
@@ -55,6 +31,7 @@ export class UserController {
       }
     }
   };
+
   public login = async (req: Request, res: Response) => {
     try {
       const input = LoginSchema.parse({
@@ -62,7 +39,7 @@ export class UserController {
         password: req.body.password,
       });
 
-      const output = await this.userBusiness.login(input);
+      const output = await this.userBusiness.userLogin(input);
 
       res.status(200).send(output);
     } catch (error) {

@@ -1,10 +1,10 @@
 import express from "express";
-import { UserController } from "../controller/UserController";
 import { UserBusiness } from "../business/UserBusiness";
+import { UserController } from "../controller/UserController";
 import { UserDatabase } from "../database/UserDatabase";
-import { IdGenerator } from "../sevices/IdGenerator";
-import { TokenManager } from "../sevices/TokenManager";
-import { HashManager } from "../sevices/HashManager";
+import { HashManager } from "../services/HashManeger";
+import { IdGenerator } from "../services/IdGenerator";
+import { TokenManager } from "../services/TokenManager";
 
 export const userRouter = express.Router();
 
@@ -17,5 +17,5 @@ const userController = new UserController(
   )
 );
 
-userRouter.get("/", userController.getUsers);
-userRouter.post("/", userController.signup);
+userRouter.post("/signup", userController.signup);
+userRouter.post("/login", userController.login);

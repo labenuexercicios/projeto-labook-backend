@@ -17,11 +17,10 @@ O Labook é uma rede social com o objetivo de promover a conexão e interação 
 
 ## Documentação da API
 
-Link Demonstração:
+[Link Demonstração](https://documenter.getpostman.com/view/25825355/2s93ebUBDa)
 
 ## Estruturação do banco de dados
 
-img aqui
 ![projeto-labook (2)](https://user-images.githubusercontent.com/29845719/216036534-2b3dfb48-7782-411a-bffd-36245b78594e.png)
 
 ## Requisitos:
@@ -36,7 +35,7 @@ img aqui
   - [x] create post
   - [x] edit post
   - [x] delete post
-  - [x] like / dislike post
+  - [] like / dislike post
 
 - Autenticação e autorização
 
@@ -83,7 +82,6 @@ $ npm run dev
 8. [Geração de UUID](https://pt.wikipedia.org/wiki/Identificador_%C3%BAnico_universal)
 9. [Geração de hashes](https://pt.wikipedia.org/wiki/Fun%C3%A7%C3%A3o_hash_criptogr%C3%A1fica)
 10. [Autenticação e autorização](https://pt.wikipedia.org/wiki/Autoriza%C3%A7%C3%A3o)
-    (https://pt.wikipedia.org/wiki/Autentica%C3%A7%C3%A3o)
 11. [Roteamento](https://acervolima.com/roteamento-em-node-js/)
 12. [Postman](https://www.postman.com/)
 

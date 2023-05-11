@@ -1,68 +1,104 @@
 import { Request, Response } from "express";
+import { ZodError } from "zod";
 import { PostBusiness } from "../business/PostBusiness";
-import { BaseError } from "../errors/BaseError";
-import { GetProductsSchema } from "../dtos/Post/getPosts.dto";
+import { CreatePostSchema } from "../dtos/Post/createPost.dto";
+import { DeletePostSchema } from "../dtos/Post/delete.dto";
+import { EditPostSchema } from "../dtos/Post/editPost.dto";
+import { GetPostsSchema } from "../dtos/Post/getPosts.dto";
 
-export class PostController {
+import { BaseError } from "../errors/BaseError";
+
+export class PostControlers {
   constructor(private postBusiness: PostBusiness) {}
+
   public getPosts = async (req: Request, res: Response) => {
     try {
-      const input = GetProductsSchema.parse({
-        q: req.query.q,
+      const input = GetPostsSchema.parse({
         token: req.headers.authorization,
       });
-
-      const output = await this.postBusiness.getPosts(input);
+      const output = await this.postBusiness.getPost(input);
 
       res.status(200).send(output);
     } catch (error) {
       console.log(error);
 
-      if (req.statusCode === 200) {
-        res.status(500);
-      }
-
-      if (error instanceof Error) {
-        res.send(error.message);
+      if (error instanceof ZodError) {
+        res.status(400).send(error.issues);
+      } else if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
       } else {
-        res.send("Erro inesperado");
+        res.status(500).send("Erro inesperado");
       }
     }
   };
-  public createPost = async (
-    input: CreateProductInputDTO
-  ): Promise<CreateProductOutputDTO> => {
-    // const { id, name, price } = input
-    const { name, price, token } = input;
 
-    const payload = this.tokenManage.getPayload(token);
+  public postPost = async (req: Request, res: Response) => {
+    try {
+      const input = CreatePostSchema.parse({
+        token: req.headers.authorization,
+        content: req.body.content,
+      });
 
-    if (payload === null) {
-      throw new Error("Você não esta logado");
+      const output = await this.postBusiness.postPost(input);
+
+      res.status(201).send(output);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof ZodError) {
+        res.status(400).send(error.issues);
+      } else if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
+  };
 
-    if (payload.role !== USER_ROLES.ADMIN) {
-      throw new BadRequestError("você não é admin");
+  public putPost = async (req: Request, res: Response) => {
+    try {
+      const input = EditPostSchema.parse({
+        token: req.headers.authorization,
+        idToEdit: req.params.id,
+        content: req.body.content,
+      });
+
+      const output = await this.postBusiness.putPost(input);
+
+      res.status(200).send(output);
+    } catch (error) {
+      console.log(error);
+
+      if (error instanceof ZodError) {
+        res.status(400).send(error.issues);
+      } else if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
+  };
 
-    // const productDBExists = await this.productDatabase.findProductById(id)
+  public deletePosts = async (req: Request, res: Response) => {
+    try {
+      const input = DeletePostSchema.parse({
+        token: req.headers.authorization,
+        idToDelete: req.params.id,
+      });
 
-    // if (productDBExists) {
-    //   throw new BadRequestError("'id' já existe")
-    // }
+      const output = await this.postBusiness.deletePost(input);
 
-    const id = this.idGenerator.generate();
+      res.status(200).send(output);
+    } catch (error) {
+      console.log(error);
 
-    const newProduct = new Product(id, name, price, new Date().toISOString());
-
-    const newProductDB = newProduct.toDBModel();
-    await this.productDatabase.insertProduct(newProductDB);
-
-    const output: CreateProductOutputDTO = {
-      message: "Producto cadastrado com sucesso",
-      product: newProduct.toBusinessModel(),
-    };
-
-    return output;
+      if (error instanceof ZodError) {
+        res.status(400).send(error.issues);
+      } else if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
+    }
   };
 }

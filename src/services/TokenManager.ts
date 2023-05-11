@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { TokenPayload } from "../types";
+import { TokenPayload } from "../models/User";
 
 dotenv.config();
 
@@ -9,7 +9,6 @@ export class TokenManager {
     const token = jwt.sign(payload, process.env.JWT_KEY as string, {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
-
     return token;
   };
 
