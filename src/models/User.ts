@@ -36,6 +36,8 @@ export class User {
     private createdAt: string,
   ) { }
 
+  // Getters e setters para as propriedades da classe
+
   public get ID(): string {
     return this.id;
   }
@@ -76,6 +78,8 @@ export class User {
     this.role = newRole;
   }
 
+  // Métodos para converter entre modelos de banco de dados, modelos de negócio e carga útil do token
+
   public toDBModel(): UserDB {
     return {
       id: this.id,
@@ -104,6 +108,4 @@ export class User {
       role: this.role
     }
   }
-
 }
-

@@ -6,13 +6,13 @@ dotenv.config()
 export enum USER_ROLES {
     NORMAL = "NORMAL",
     ADMIN = "ADMIN"
-} // realocar para o arquivo da entidade User
+}
 
 export interface TokenPayload {
     id: string,
     name: string,
     role: USER_ROLES
-} // realocar para o arquivo da entidade User
+}
 
 export class TokenManager {
     public createToken = (payload: TokenPayload): string => {
@@ -34,8 +34,9 @@ export class TokenManager {
             )
 
             return payload as TokenPayload
-				} catch (error) {
+        } catch (error) {
             return null
         }
     }
 }
+

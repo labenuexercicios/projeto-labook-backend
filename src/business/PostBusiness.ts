@@ -1,36 +1,60 @@
-import { PostsDatabase } from "../database/PostsDatabase"
-import { CreatePostInputDTO, CreatePostOutputDTO } from "../dto/Post/createPost.dto"
-import { DeletePostByIdInputDTO, DeletePostByIdOutputDTO } from "../dto/Post/deletePostById.dto"
-import { EditPostByIdInputDTO, EditPostByIdOutputDTO } from "../dto/Post/editPostById.dto"
-import { GetPostsInputDTO, GetPostsOutputDTO } from "../dto/Post/getPosts.dto"
-import { LikeOrDislikePostInputDTO, LikeOrDislikePostOutputDTO } from "../dto/Post/likeOrDislikePost.dto"
-import { ForbiddenError } from "../errors/ForbiddenError"
-import { NotFoundError } from "../errors/NotFoundError"
-import { UnauthorizedError } from "../errors/UnauthorizedError"
-import { LikeDislikeDB, POST_LIKE, Post, PostDB, PostModel, PostWithCreatorDB } from "../models/Post"
-import { TokenPayload, USER_ROLES } from "../models/User"
-import { IdGenerator } from "../services/IdGenerator"
-import { TokenManager } from "../services/TokenManager"
+import { PostsDatabase } from "../database/PostsDatabase";
+import {
+  CreatePostInputDTO,
+  CreatePostOutputDTO,
+} from "../dto/Post/createPost.dto";
+import {
+  DeletePostByIdInputDTO,
+  DeletePostByIdOutputDTO,
+} from "../dto/Post/deletePostById.dto";
+import {
+  EditPostByIdInputDTO,
+  EditPostByIdOutputDTO,
+} from "../dto/Post/editPostById.dto";
+import { GetPostsInputDTO, GetPostsOutputDTO } from "../dto/Post/getPosts.dto";
+import {
+  LikeOrDislikePostInputDTO,
+  LikeOrDislikePostOutputDTO,
+} from "../dto/Post/likeOrDislikePost.dto";
+import { ForbiddenError } from "../errors/ForbiddenError";
+import { NotFoundError } from "../errors/NotFoundError";
+import { UnauthorizedError } from "../errors/UnauthorizedError";
+import {
+  LikeDislikeDB,
+  POST_LIKE,
+  Post,
+  PostDB,
+  PostModel,
+  PostWithCreatorDB,
+} from "../models/Post";
+import { TokenPayload, USER_ROLES } from "../models/User";
+import { IdGenerator } from "../services/IdGenerator";
+import { TokenManager } from "../services/TokenManager";
 
 export class PostBusiness {
   constructor(
     private postsDatabase: PostsDatabase,
     private idGenerator: IdGenerator,
     private tokenManager: TokenManager
-  ) { }
+  ) {}
 
-  public createPost = async (input: CreatePostInputDTO): Promise<CreatePostOutputDTO> => {
+  // Método para criar um post
+  public createPost = async (
+    input: CreatePostInputDTO
+  ): Promise<CreatePostOutputDTO> => {
+    const { content, token } = input;
 
-    const { content, token } = input
-
-    const payload: TokenPayload | null = this.tokenManager.getPayload(token)
+    // Verificar se o token é válido
+    const payload: TokenPayload | null = this.tokenManager.getPayload(token);
 
     if (!payload) {
-      throw new UnauthorizedError()
+      throw new UnauthorizedError();
     }
 
-    const id: string = this.idGenerator.generate()
+    // Gerar um ID para o post
+    const id: string = this.idGenerator.generate();
 
+    // Criar um novo post com os dados fornecidos
     const newPost = new Post(
       id,
       content,
@@ -40,32 +64,45 @@ export class PostBusiness {
       new Date().toISOString(),
       payload.id,
       payload.name
-    )
+    );
 
-    const newPostDB: PostDB = newPost.toDBModel()
-    await this.postsDatabase.insertPost(newPostDB)
+    // Converter o novo post para o formato de banco de dados
+    const newPostDB: PostDB = newPost.toDBModel();
+
+    // Inserir o novo post no banco de dados
+    await this.postsDatabase.insertPost(newPostDB);
 
     const output: CreatePostOutputDTO = {
-      message: "Post criado com sucesso!"
-    }
+      message: "Post criado com sucesso!",
+    };
 
-    return output
-  }
+    return output;
+  };
 
-  public getPosts = async (input: GetPostsInputDTO): Promise<GetPostsOutputDTO> => {
+  // Método para obter os posts
+  public getPosts = async (
+    input: GetPostsInputDTO
+  ): Promise<GetPostsOutputDTO> => {
+    const { query, token } = input;
 
-    const { query, token } = input
-
-    const payload: TokenPayload | null = this.tokenManager.getPayload(token)
+    // Verificar se o token é válido
+    const payload: TokenPayload | null = this.tokenManager.getPayload(token);
 
     if (!payload) {
-      throw new UnauthorizedError()
+      throw new UnauthorizedError();
     }
 
-    const postsDB: PostWithCreatorDB[] = await this.postsDatabase.getPostsWithCreator(query)
+    // Obter os posts do banco de dados
+    const postsDB: PostWithCreatorDB[] =
+      await this.postsDatabase.getPostsWithCreator(query);
 
+    // Verificar se existem posts
+    if (!postsDB.length) {
+      throw new NotFoundError("Nenhum post foi cadastrado no banco de dados.");
+    }
+
+    // Converter os posts para o formato de negócio
     const posts: PostModel[] = postsDB.map((postDB) => {
-
       const post = new Post(
         postDB.id,
         postDB.content,
@@ -75,41 +112,47 @@ export class PostBusiness {
         postDB.updated_at,
         postDB.creator_id,
         postDB.creator_name
-      )
+      );
+      return post.toBusinessModel();
+    });
 
-      return post.toBusinessModel()
+    const output: GetPostsOutputDTO = posts;
+    return output;
+  };
 
-    })
+  // Método para editar um post pelo ID
+  public editPostById = async (
+    input: EditPostByIdInputDTO
+  ): Promise<EditPostByIdOutputDTO> => {
+    const { idToEditPost, content, token } = input;
 
-    if (!posts.length) {
-      throw new NotFoundError("Nenhum post foi cadastrado no banco de dados.")
-    }
-
-    const output: GetPostsOutputDTO = posts
-    return output
-  }
-
-  public editPostById = async (input: EditPostByIdInputDTO): Promise<EditPostByIdOutputDTO> => {
-    const { idToEditPost, content, token } = input
-
-    const payload: TokenPayload | null = this.tokenManager.getPayload(token)
+    // Verificar se o token é válido
+    const payload: TokenPayload | null = this.tokenManager.getPayload(token);
 
     if (!payload) {
-      throw new UnauthorizedError()
+      throw new UnauthorizedError();
     }
 
-    const postDB: PostDB | undefined = await this.postsDatabase.getPostById(idToEditPost)
+    // Obter o post pelo ID
+    const postDB: PostDB | undefined = await this.postsDatabase.getPostById(
+      idToEditPost
+    );
 
+    // Verificar se o post existe
     if (!postDB) {
-      throw new NotFoundError("Post não encontrado.")
+      throw new NotFoundError("Post não encontrado.");
     }
 
+    // Verificar se o usuário tem permissão para editar o post
     if (payload.role !== USER_ROLES.ADMIN) {
       if (payload.id !== postDB.creator_id) {
-        throw new ForbiddenError("Somente o criador pode editar o post. Caso não tenha acesso a sua conta, entre em contato com nosso suporte.")
+        throw new ForbiddenError(
+          "Somente o criador pode editar o post. Caso não tenha acesso à sua conta, entre em contato com nosso suporte."
+        );
       }
     }
 
+    // Atualizar o conteúdo e a data de atualização do post
     const post = new Post(
       postDB.id,
       postDB.content,
@@ -119,72 +162,96 @@ export class PostBusiness {
       postDB.updated_at,
       payload.id,
       payload.name
-    )
+    );
 
-    post.CONTENT = content
-    post.UPDATED_AT = new Date().toISOString()
+    post.CONTENT = content;
+    post.UPDATED_AT = new Date().toISOString();
 
-    const updatedPostDB: PostDB = post.toDBModel()
-    await this.postsDatabase.updatePostById(postDB.id, updatedPostDB)
+    // Converter o post atualizado para o formato de banco de dados
+    const updatedPostDB: PostDB = post.toDBModel();
+
+    // Atualizar o post no banco de dados
+    await this.postsDatabase.updatePostById(postDB.id, updatedPostDB);
 
     const output: EditPostByIdOutputDTO = {
       message: "Post atualizado com sucesso!",
-    }
+    };
 
-    return output
-  }
+    return output;
+  };
 
-  public deletePostById = async (input: DeletePostByIdInputDTO): Promise<DeletePostByIdOutputDTO> => {
+  // Método para excluir um post pelo ID
+  public deletePostById = async (
+    input: DeletePostByIdInputDTO
+  ): Promise<DeletePostByIdOutputDTO> => {
+    const { idToDelete, token } = input;
 
-    const { idToDelete, token } = input
-
-    const payload: TokenPayload | null = this.tokenManager.getPayload(token)
+    // Verificar se o token é válido
+    const payload: TokenPayload | null = this.tokenManager.getPayload(token);
 
     if (!payload) {
-      throw new UnauthorizedError()
+      throw new UnauthorizedError();
     }
 
-    const postDB: PostDB | undefined = await this.postsDatabase.getPostById(idToDelete)
+    // Obter o post pelo ID
+    const postDB: PostDB | undefined = await this.postsDatabase.getPostById(
+      idToDelete
+    );
 
+    // Verificar se o post existe
     if (!postDB) {
-      throw new NotFoundError("Post não encontrado.")
+      throw new NotFoundError("Post não encontrado.");
     }
 
+    // Verificar se o usuário tem permissão para excluir o post
     if (payload.role !== USER_ROLES.ADMIN) {
       if (payload.id !== postDB.creator_id) {
-        throw new ForbiddenError("Somente o criador pode excluir o post. Caso não tenha acesso a sua conta, entre em contato com nosso suporte.")
+        throw new ForbiddenError(
+          "Somente o criador pode excluir o post. Caso não tenha acesso à sua conta, entre em contato com nosso suporte."
+        );
       }
     }
 
-    await this.postsDatabase.deleteUserById(idToDelete)
+    // Excluir o post do banco de dados
+    await this.postsDatabase.deleteUserById(idToDelete);
 
     const output: DeletePostByIdOutputDTO = {
       message: "Post excluído com sucesso!",
-    }
+    };
 
-    return output
-  }
+    return output;
+  };
 
-  public likeOrDislikePost = async (input: LikeOrDislikePostInputDTO): Promise<LikeOrDislikePostOutputDTO> => {
+  // Método para curtir ou descurtir um post
+  public likeOrDislikePost = async (
+    input: LikeOrDislikePostInputDTO
+  ): Promise<void | LikeOrDislikePostOutputDTO> => {
+    const { postId, token, like } = input;
 
-    const { postId, token, like } = input
-
-    const payload: TokenPayload | null = this.tokenManager.getPayload(token)
+    // Verificar se o token é válido
+    const payload: TokenPayload | null = this.tokenManager.getPayload(token);
 
     if (!payload) {
-      throw new UnauthorizedError()
+      throw new UnauthorizedError();
     }
 
-    const postDBWithCreatorName: PostWithCreatorDB | undefined = await this.postsDatabase.getPostWithCreatorById(postId)
+    // Obter o post com o nome do criador
+    const postDBWithCreatorName: PostWithCreatorDB | undefined =
+      await this.postsDatabase.getPostWithCreatorById(postId);
 
+    // Verificar se o post existe
     if (!postDBWithCreatorName) {
-      throw new NotFoundError("Post com esse id não encontrado.")
+      throw new NotFoundError("Post com esse ID não encontrado.");
     }
 
+    // Verificar se o usuário está tentando interagir com seu próprio post
     if (payload.id === postDBWithCreatorName.creator_id) {
-      throw new ForbiddenError("Não é possível interagir com seu próprio post.")
+      throw new ForbiddenError(
+        "Não é possível interagir com seu próprio post."
+      );
     }
 
+    // Criar um objeto de Post a partir dos dados do banco de dados
     const post = new Post(
       postDBWithCreatorName.id,
       postDBWithCreatorName.content,
@@ -194,36 +261,51 @@ export class PostBusiness {
       postDBWithCreatorName.updated_at,
       postDBWithCreatorName.creator_id,
       postDBWithCreatorName.creator_name
-    )
+    );
 
-    const likeSQLite: number = like ? 1 : 0
+    // Converter o valor de like para o formato do banco de dados
+    const likeSQLite: number = like ? 1 : 0;
 
+    // Criar um objeto de LikeDislikeDB para interação com o banco de dados
     const likeDislikeDB: LikeDislikeDB = {
       user_id: payload.id,
       post_id: postId,
-      like: likeSQLite
-    }
+      like: likeSQLite,
+    };
 
-    const likeDislikeExists: POST_LIKE | undefined = await this.postsDatabase.getLikeDislike(likeDislikeDB)
+    // Verificar se o usuário já curtiu ou descurtiu o post
+    const likeDislikeExists: POST_LIKE | undefined =
+      await this.postsDatabase.getLikeDislike(likeDislikeDB);
 
-    likeDislikeExists === POST_LIKE.ALREADY_LIKED && like ?
-      (await this.postsDatabase.removeLikeDislike(likeDislikeDB), post.removeLike())
-      : likeDislikeExists === POST_LIKE.ALREADY_LIKED && !like ?
-        (await this.postsDatabase.updateLikeDislike(likeDislikeDB), post.removeLike(), post.addDislike())
-        : likeDislikeExists === POST_LIKE.ALREADY_DISLIKED && !like ?
-          (await this.postsDatabase.removeLikeDislike(likeDislikeDB), post.removeDislike())
-          : likeDislikeExists === POST_LIKE.ALREADY_DISLIKED && like ?
-            (await this.postsDatabase.updateLikeDislike(likeDislikeDB), post.removeDislike(), post.addLike())
-            : likeDislikeExists === undefined && like ?
-              (await this.postsDatabase.insertLikeDislike(likeDislikeDB), post.addLike())
-              : (await this.postsDatabase.insertLikeDislike(likeDislikeDB), post.addDislike())
+    // Realizar as ações apropriadas com base no estado anterior da interação
+    likeDislikeExists === POST_LIKE.ALREADY_LIKED && like
+      ? (await this.postsDatabase.removeLikeDislike(likeDislikeDB),
+        post.removeLike())
+      : likeDislikeExists === POST_LIKE.ALREADY_LIKED && !like
+      ? (await this.postsDatabase.updateLikeDislike(likeDislikeDB),
+        post.removeLike(),
+        post.addDislike())
+      : likeDislikeExists === POST_LIKE.ALREADY_DISLIKED && !like
+      ? (await this.postsDatabase.removeLikeDislike(likeDislikeDB),
+        post.removeDislike())
+      : likeDislikeExists === POST_LIKE.ALREADY_DISLIKED && like
+      ? (await this.postsDatabase.updateLikeDislike(likeDislikeDB),
+        post.removeDislike(),
+        post.addLike())
+      : likeDislikeExists === undefined && like
+      ? (await this.postsDatabase.insertLikeDislike(likeDislikeDB),
+        post.addLike())
+      : (await this.postsDatabase.insertLikeDislike(likeDislikeDB),
+        post.addDislike());
 
-    const updatedPostDB: PostDB = post.toDBModel()
+    // Converter o post atualizado para o formato de banco de dados
+    const updatedPostDB: PostDB = post.toDBModel();
 
-    await this.postsDatabase.updatePostById(postId, updatedPostDB)
+    // Atualizar o post no banco de dados
+    await this.postsDatabase.updatePostById(postId, updatedPostDB);
 
     const output: LikeOrDislikePostOutputDTO = undefined
     return output
 
-  }
+  };
 }

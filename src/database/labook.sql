@@ -1,5 +1,4 @@
--- Active: 1684451342635@@127.0.0.1@3306
-
+-- Active: 1684494767123@@127.0.0.1@3306
 
 CREATE TABLE
     users (
@@ -71,13 +70,13 @@ INSERT INTO
 VALUES (
         "p001",
         "u001",
-        "Começando o último projeto de backend da Labenu!"
+        "Estou tão perto de me formar, me sentindo orgulhosa."
     ), (
         "p002",
         "u001",
-        "Que preguiça de fazer projeto em uma sexta-feira chuvosa! haha"
+        "Mesmo me formando irei continuar estudando, backend é lindo!!"
     ), (
         "p003",
         "u002",
-        "Buscando indicações de vagas junior para minha esposa!"
+        "Espero achar um trabalho que me faça feliz!!"
     );
