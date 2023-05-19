@@ -4,7 +4,6 @@ import { DeletePostByIdInputDTO, DeletePostByIdOutputDTO } from "../dto/Post/del
 import { EditPostByIdInputDTO, EditPostByIdOutputDTO } from "../dto/Post/editPostById.dto"
 import { GetPostsInputDTO, GetPostsOutputDTO } from "../dto/Post/getPosts.dto"
 import { LikeOrDislikePostInputDTO, LikeOrDislikePostOutputDTO } from "../dto/Post/likeOrDislikePost.dto"
-import { BadRequestError } from "../errors/BadRequestError"
 import { ForbiddenError } from "../errors/ForbiddenError"
 import { NotFoundError } from "../errors/NotFoundError"
 import { UnauthorizedError } from "../errors/UnauthorizedError"
