@@ -1,4 +1,4 @@
-import { PostsDatabase } from "../database/PostDatabase"
+import { PostsDatabase } from "../database/PostsDatabase"
 import { CreatePostInputDTO, CreatePostOutputDTO } from "../dto/Post/createPost.dto"
 import { DeletePostByIdInputDTO, DeletePostByIdOutputDTO } from "../dto/Post/deletePostById.dto"
 import { EditPostByIdInputDTO, EditPostByIdOutputDTO } from "../dto/Post/editPostById.dto"

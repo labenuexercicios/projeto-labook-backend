@@ -29,7 +29,7 @@ import {
 } from "../dto/User/editUserById.dto";
 
 export class UserController {
-  constructor(private userBusiness: UserBusiness) {}
+  constructor(private userBusiness: UserBusiness) { }
 
   public signup = async (req: Request, res: Response): Promise<void> => {
     try {
