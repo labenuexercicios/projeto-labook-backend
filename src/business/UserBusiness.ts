@@ -68,6 +68,7 @@ export class UserBusiness {
 
     const tokenPayload: TokenPayload = newUser.toTokenPayload();
     const token = this.tokenManager.createToken(tokenPayload);
+console.log(token);
 
     const output: SignupOutputDTO = {
       message: "Cadastro realizado com sucesso!",
@@ -115,6 +116,7 @@ export class UserBusiness {
 
     const tokenPayload: TokenPayload = user.toTokenPayload();
     const token = this.tokenManager.createToken(tokenPayload);
+console.log(token);
 
     const output: LoginOutputDTO = {
       message: "Login realizado com sucesso!",

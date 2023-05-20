@@ -1,9 +1,19 @@
+#  - Desenvolvido por Clara -
+
+### Veja a documentação: 
+[**API Labook**](https://documenter.getpostman.com/view/26000888/2s93m1aPzE)
+<br>
+
 # Projeto Labook
-O Labook é uma rede social com o objetivo de promover a conexão e interação entre pessoas. Quem se cadastrar no aplicativo poderá criar e curtir publicações.
 
-Agora que temos as bases de criação de APIs e banco de dados, o próximo nível é a implementação de segurança e códigos mais escaláveis. Veremos durante o prazo de entrega desse projeto inúmeros conceitos e formas de desenvolvimento seguindo padrões de design e arquitetura, e seu desafio será unir as funcionalidades com as boas práticas de código.
+O Labook é uma rede social que visa conectar e interagir pessoas, permitindo que os usuários criem e curtam posts. O projeto consiste em uma API que fornece funcionalidades CRUD para posts, além de cadastro e login de usuários.
 
-# Conteúdos abordados
+Os usuários podem criar, visualizar, atualizar e excluir seus próprios posts, bem como curtir e descurtir posts de outros usuários. A autenticação é feita por meio de tokens JWT, garantindo a segurança das informações e das operações realizadas pelos usuários.
+
+O projeto foi desenvolvido seguindo as melhores práticas de programação e utilizando tecnologias modernas, visando uma ótima performance e uma experiência de usuário agradável e intuitiva. Durante o desenvolvimento, foram aplicados conceitos de design e arquitetura para garantir a escalabilidade e a manutenibilidade do código.
+
+
+## **Tecnologias Utilizadas:**
 - NodeJS
 - Typescript
 - Express
@@ -17,206 +27,57 @@ Agora que temos as bases de criação de APIs e banco de dados, o próximo níve
 - Roteamento
 - Postman
 
-# Banco de dados
-![projeto-labook (2)](https://user-images.githubusercontent.com/29845719/216036534-2b3dfb48-7782-411a-bffd-36245b78594e.png)
+## Banco de dados:
+![projeto-labook](https://user-images.githubusercontent.com/29845719/216036534-2b3dfb48-7782-411a-bffd-36245b78594e.png)
 
-https://dbdiagram.io/d/63d16443296d97641d7c1ae1
+# **API Labook**
+- Documentação [**Postman**](https://documenter.getpostman.com/view/26000888/2s93m1aPzE) com todos os endpoints;
+- **Endpoints:**
+    - **Users:**
+        - Signup
+            - Cadastra uma nova pessoa.
+        - Login
+            - Efetua o login de uma pessoa cadastrada.
+        - Get all users        
+            - Retorna todas as pessoas cadastradas.
+            - Pode ser enviado uma query, q fará uma busca do parâmetro no nome do usuário, retornando o/os usuários se existirem.
+            - **Somente admins tem acesso a esse endpoint.**
+    - **Posts:**    
+        - Create Post
+            - Adiciona um post.
+        - Get Posts
+            - Retorna todos os posts.
+        - Edit Post
+            - Edita um post.
+        - Delete Post
+            - Deleta um post.
+            - Só quem criou o post pode deletá-lo.
+            - **Admins podem deletar o post de qualquer pessoa.**
+        - Like / Dislike Post.
+            - Quem criou o post não pode dar like ou dislike no mesmo.
+            - Caso dê um like em um post que já tenha dado like, o like é desfeito.
+            - Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.
+            - Caso dê um like em um post que tenha dado dislike, o like sobrescreve o dislike.
+            - Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like.
 
-# Lista de requisitos
-- Documentação Postman de todos os endpoints (obrigatória para correção)
-
-- Endpoints
-    - [ ]  signup
-    - [ ]  login
-    - [ ]  get posts
-    - [ ]  create post
-    - [ ]  edit post
-    - [ ]  delete post
-    - [ ]  like / dislike post
-
-- Autenticação e autorização
-    - [ ]  identificação UUID
-    - [ ]  senhas hasheadas com Bcrypt
-    - [ ]  tokens JWT
+- **Autenticação e autorização:**
+    - Identificação UUID
+    - Senhas hasheadas com Bcrypt
+    - Tokens JWT
  
- - Código
-    - [ ]  POO
-    - [ ]  Arquitetura em camadas
-    - [ ]  Roteadores no Express
+ - **Código**
+    - POO
+    - Arquitetura em camadas
+    - Roteadores no Express
 
-- README.md
+## **Instalação:**
 
-# Token payload e User roles
-O enum de roles e o payload do token JWT devem estar no seguinte formato:
-```typescript
-export enum USER_ROLES {
-    NORMAL = "NORMAL",
-    ADMIN = "ADMIN"
-}
+Para instalar a [**API Labook**](https://documenter.getpostman.com/view/26000888/2s93m1aPzE), você precisará seguir os seguintes passos:
 
-export interface TokenPayload {
-    id: string,
-    name: string,
-    role: USER_ROLES
-}
-```
-
-# Exemplos de requisição
-
-## Signup
-Endpoint público utilizado para cadastro. Devolve um token jwt.
-```typescript
-// request POST /users/signup
-// body JSON
-{
-  "name": "Beltrana",
-  "email": "beltrana@email.com",
-  "password": "beltrana00"
-}
-
-// response
-// status 201 CREATED
-{
-  token: "um token jwt"
-}
-```
-
-## Login
-Endpoint público utilizado para login. Devolve um token jwt.
-```typescript
-// request POST /users/login
-// body JSON
-{
-  "email": "beltrana@email.com",
-  "password": "beltrana00"
-}
-
-// response
-// status 200 OK
-{
-  token: "um token jwt"
-}
-```
-
-## Get posts
-Endpoint protegido, requer um token jwt para acessá-lo.
-```typescript
-// request GET /posts
-// headers.authorization = "token jwt"
-
-// response
-// status 200 OK
-[
-    {
-        "id": "uma uuid v4",
-        "content": "Hoje vou estudar POO!",
-        "likes": 2,
-        "dislikes" 1,
-        "createdAt": "2023-01-20T12:11:47:000Z"
-        "updatedAt": "2023-01-20T12:11:47:000Z"
-        "creator": {
-            "id": "uma uuid v4",
-            "name": "Fulano"
-        }
-    },
-    {
-        "id": "uma uuid v4",
-        "content": "kkkkkkkkkrying",
-        "likes": 0,
-        "dislikes" 0,
-        "createdAt": "2023-01-20T15:41:12:000Z"
-        "updatedAt": "2023-01-20T15:49:55:000Z"
-        "creator": {
-            "id": "uma uuid v4",
-            "name": "Ciclana"
-        }
-    }
-]
-```
-
-## Create post
-Endpoint protegido, requer um token jwt para acessá-lo.
-```typescript
-// request POST /posts
-// headers.authorization = "token jwt"
-// body JSON
-{
-    "content": "Partiu happy hour!"
-}
-
-// response
-// status 201 CREATED
-```
-
-## Edit post
-Endpoint protegido, requer um token jwt para acessá-lo.<br>
-Só quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
-```typescript
-// request PUT /posts/:id
-// headers.authorization = "token jwt"
-// body JSON
-{
-    "content": "Partiu happy hour lá no point de sempre!"
-}
-
-// response
-// status 200 OK
-```
-
-## Delete post
-Endpoint protegido, requer um token jwt para acessá-lo.<br>
-Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer pessoa.
-
-```typescript
-// request DELETE /posts/:id
-// headers.authorization = "token jwt"
-
-// response
-// status 200 OK
-```
-
-## Like or dislike post (mesmo endpoint faz as duas coisas)
-
-Endpoint protegido, requer um token jwt para acessá-lo.<br>
-Quem criou o post não pode dar like ou dislike no mesmo.<br><br>
-Caso dê um like em um post que já tenha dado like, o like é desfeito.<br>
-Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.<br><br>
-Caso dê um like em um post que tenha dado dislike, o like sobrescreve o dislike.<br>
-Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like.
-### Like (funcionalidade 1)
-```typescript
-// request PUT /posts/:id/like
-// headers.authorization = "token jwt"
-// body JSON
-{
-    "like": true
-}
-
-// response
-// status 200 OK
-```
-
-### Dislike (funcionalidade 2)
-```typescript
-// request PUT /posts/:id/like
-// headers.authorization = "token jwt"
-// body JSON
-{
-    "like": false
-}
-
-// response
-// status 200 OK
-```
-
-### Para entender a tabela likes_dislikes
-- no SQLite, lógicas booleanas devem ser controladas via 0 e 1 (INTEGER)
-- quando like valer 1 na tabela é porque a pessoa deu like no post
-    - na requisição like é true
-    
-- quando like valer 0 na tabela é porque a pessoa deu dislike no post
-    - na requisição like é false
-    
-- caso não exista um registro na tabela de relação, é porque a pessoa não deu like nem dislike
-- caso dê like em um post que já tenha dado like, o like é removido (deleta o item da tabela)
-- caso dê dislike em um post que já tenha dado dislike, o dislike é removido (deleta o item da tabela)
+- Certifique-se de que o Node.js e o gerenciador de pacotes NPM estejam instalados em seu sistema.
+- Baixe ou clone o repositório do projeto em sua máquina.
+- Abra o terminal no diretório do projeto e execute o comando npm install para instalar todas as dependências necessárias.
+- Crie e configure a database com o SQLServer. Siga o caminho em .env.example.
+- Em seguida, execute o comando npm run start para iniciar o servidor localmente. Ou execute o comando npm run dev para iniciar o servidor da API em modo de desenvolvimento.
+- Agora você pode acessar a API usando o endpoint http://localhost:3000/.
+- Para obter informações mais detalhadas sobre como usar os endpoints, consulte a documentação da [**API Labook**](https://documenter.getpostman.com/view/26000888/2s93m1aPzE).

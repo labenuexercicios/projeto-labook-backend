@@ -4,7 +4,7 @@ import { UserModel } from "../../models/User"
 //- `GetUsersInputDTO`: Define os campos `query` e `token`. O campo `query` representa o critério de busca para filtrar os usuários, e o campo `token` representa o token de autenticação do usuário que está fazendo a requisição.
 export interface GetUsersInputDTO {
     query: string,
-    token: string
+    token: string,
 }
 //- `GetUsersOutputDTO`: É um tipo definido como um array de objetos do tipo `UserModel`. Essa interface representa os usuários retornados pela operação de obtenção de usuários.
 export type GetUsersOutputDTO = UserModel[]
