@@ -18,6 +18,8 @@ export class UserController {
         token: req.headers.authorization
       })
 
+      // console.log('consulta------------------->', input)
+
       const output = await this.userBusiness.getUsers(input)
 
       res.status(200).send(output)

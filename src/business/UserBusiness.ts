@@ -28,11 +28,14 @@ export class UserBusiness {
       throw new BadRequestError('Token inválido')
     }
 
-    if (payload.role !== USER_ROLES.ADMIN) {
-      throw new BadRequestError('O user deve ser ADMIN')
-    }
+    // if (payload.role !== USER_ROLES.ADMIN) {
+    //   throw new BadRequestError('O user deve ser ADMIN')
+    // }
+
+    console.log('consulta------------------->', q)
 
     const usersDB = await this.userDatabase.findUsers(q)
+    console.log(usersDB)
 
     const users = usersDB.map((userDB) => {
       const user = new User(
