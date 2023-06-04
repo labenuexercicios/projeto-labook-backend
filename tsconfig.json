@@ -1,14 +1,13 @@
 {
-  "compilerOptions": {
-      "target": "ES6",
-      "module": "commonjs",   
-      "sourceMap": true,       
-      "outDir": "./build",      
-      "rootDir": "./src",       
-      "removeComments": true,   
-      "noImplicitAny": true,      
-      "esModuleInterop": true,
-      "noEmitOnError": true,
-      "strict": true
+    "compilerOptions": {
+        "target": "ES6",
+        "module": "commonjs",
+        "sourceMap": true, 
+        "outDir": "./build",
+        "rootDir": "./src",
+        "removeComments": true, 
+        "noImplicitAny": true,
+        "noEmitOnError": true,
+        "esModuleInterop": true 
+    }
   }
-}

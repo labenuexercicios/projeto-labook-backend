@@ -1,8 +1,7 @@
 const SemVer = require('../classes/semver')
 
-const inc = (version, release, options, identifier, identifierBase) => {
+const inc = (version, release, options, identifier) => {
   if (typeof (options) === 'string') {
-    identifierBase = identifier
     identifier = options
     options = undefined
   }
@@ -11,7 +10,7 @@ const inc = (version, release, options, identifier, identifierBase) => {
     return new SemVer(
       version instanceof SemVer ? version.version : version,
       options
-    ).inc(release, identifier, identifierBase).version
+    ).inc(release, identifier).version
   } catch (er) {
     return null
   }

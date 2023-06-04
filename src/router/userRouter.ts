@@ -1,12 +1,22 @@
-import  express  from "express"
-import { UserControler } from "../Controller/UserControler"
-import { UserBusiness } from "../Business/UserBusiness"
-import { UserDataBase } from "../database/UserDataBase"
-import { IdGenerator } from "../service/idGenerator"
-import { HashManager } from "../service/hashManager"
-import { TokenManager } from "../service/tokenManager"
+import express from "express"
+import { UserBusiness } from "../business/userBusiness"
+import { UserController } from "../controller/UserController"
+import { UserDatabase } from "../database/UserDatabase"
+import { IdGenerator } from "../services/IdGenerator"
+import { TokenManager } from "../services/TokenManager"
+import { HashManager } from "../services/HashManager"
+
 export const userRouter = express.Router()
 
-const userControler = new UserControler(new UserBusiness(new UserDataBase(), new IdGenerator(), new HashManager(), new TokenManager()))
+const userController = new UserController(
+    new UserBusiness(
+        new UserDatabase(),
+        new IdGenerator(),
+        new TokenManager(),
+        new HashManager() // instanciamos o serviço
+    )
+)
 
-userRouter.post("/signup", userControler.signup)
+userRouter.get("/", userController.getUsers)
+userRouter.post("/signup", userController.signup)
+userRouter.post("/login", userController.login)

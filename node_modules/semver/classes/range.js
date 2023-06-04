@@ -81,10 +81,8 @@ class Range {
 
     // memoize range parsing for performance.
     // this is a very hot path, and fully deterministic.
-    const memoOpts =
-      (this.options.includePrerelease && FLAG_INCLUDE_PRERELEASE) |
-      (this.options.loose && FLAG_LOOSE)
-    const memoKey = memoOpts + ':' + range
+    const memoOpts = Object.keys(this.options).join(',')
+    const memoKey = `parseRange:${memoOpts}:${range}`
     const cached = cache.get(memoKey)
     if (cached) {
       return cached
@@ -192,7 +190,6 @@ class Range {
     return false
   }
 }
-
 module.exports = Range
 
 const LRU = require('lru-cache')
@@ -209,7 +206,6 @@ const {
   tildeTrimReplace,
   caretTrimReplace,
 } = require('../internal/re')
-const { FLAG_INCLUDE_PRERELEASE, FLAG_LOOSE } = require('../internal/constants')
 
 const isNullSet = c => c.value === '<0.0.0-0'
 const isAny = c => c.value === ''
