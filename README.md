@@ -1,54 +1,53 @@
-# Projeto Labook
+Projeto Labook
 O Labook é uma rede social com o objetivo de promover a conexão e interação entre pessoas. Quem se cadastrar no aplicativo poderá criar e curtir publicações.
 
 Agora que temos as bases de criação de APIs e banco de dados, o próximo nível é a implementação de segurança e códigos mais escaláveis. Veremos durante o prazo de entrega desse projeto inúmeros conceitos e formas de desenvolvimento seguindo padrões de design e arquitetura, e seu desafio será unir as funcionalidades com as boas práticas de código.
 
-# Conteúdos abordados
-- NodeJS
-- Typescript
-- Express
-- SQL e SQLite
-- Knex
-- POO
-- Arquitetura em camadas
-- Geração de UUID
-- Geração de hashes
-- Autenticação e autorização
-- Roteamento
-- Postman
-
-# Banco de dados
-![projeto-labook (2)](https://user-images.githubusercontent.com/29845719/216036534-2b3dfb48-7782-411a-bffd-36245b78594e.png)
+Conteúdos abordados
+NodeJS
+Typescript
+Express
+SQL e SQLite
+Knex
+POO
+Arquitetura em camadas
+Geração de UUID
+Geração de hashes
+Autenticação e autorização
+Roteamento
+Postman
+Banco de dados
+projeto-labook (2)
 
 https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
-# Lista de requisitos
-- Documentação Postman de todos os endpoints (obrigatória para correção)
+Lista de requisitos
+Documentação Postman de todos os endpoints (obrigatória para correção)
 
-- Endpoints
-    - [ ]  signup
-    - [ ]  login
-    - [ ]  get posts
-    - [ ]  create post
-    - [ ]  edit post
-    - [ ]  delete post
-    - [ ]  like / dislike post
+Endpoints
 
-- Autenticação e autorização
-    - [ ]  identificação UUID
-    - [ ]  senhas hasheadas com Bcrypt
-    - [ ]  tokens JWT
- 
- - Código
-    - [ ]  POO
-    - [ ]  Arquitetura em camadas
-    - [ ]  Roteadores no Express
+ signup
+ login
+ get posts
+ create post
+ edit post
+ delete post
+ like / dislike post
+Autenticação e autorização
 
-- README.md
+ identificação UUID
+ senhas hasheadas com Bcrypt
+ tokens JWT
+Código
 
-# Token payload e User roles
+ POO
+ Arquitetura em camadas
+ Roteadores no Express
+README.md
+
+Token payload e User roles
 O enum de roles e o payload do token JWT devem estar no seguinte formato:
-```typescript
+
 export enum USER_ROLES {
     NORMAL = "NORMAL",
     ADMIN = "ADMIN"
@@ -59,13 +58,10 @@ export interface TokenPayload {
     name: string,
     role: USER_ROLES
 }
-```
-
-# Exemplos de requisição
-
-## Signup
+Exemplos de requisição
+Signup
 Endpoint público utilizado para cadastro. Devolve um token jwt.
-```typescript
+
 // request POST /users/signup
 // body JSON
 {
@@ -79,11 +75,9 @@ Endpoint público utilizado para cadastro. Devolve um token jwt.
 {
   token: "um token jwt"
 }
-```
-
-## Login
+Login
 Endpoint público utilizado para login. Devolve um token jwt.
-```typescript
+
 // request POST /users/login
 // body JSON
 {
@@ -96,11 +90,9 @@ Endpoint público utilizado para login. Devolve um token jwt.
 {
   token: "um token jwt"
 }
-```
-
-## Get posts
+Get posts
 Endpoint protegido, requer um token jwt para acessá-lo.
-```typescript
+
 // request GET /posts
 // headers.authorization = "token jwt"
 
@@ -132,11 +124,9 @@ Endpoint protegido, requer um token jwt para acessá-lo.
         }
     }
 ]
-```
-
-## Create post
+Create post
 Endpoint protegido, requer um token jwt para acessá-lo.
-```typescript
+
 // request POST /posts
 // headers.authorization = "token jwt"
 // body JSON
@@ -146,12 +136,10 @@ Endpoint protegido, requer um token jwt para acessá-lo.
 
 // response
 // status 201 CREATED
-```
-
-## Edit post
-Endpoint protegido, requer um token jwt para acessá-lo.<br>
+Edit post
+Endpoint protegido, requer um token jwt para acessá-lo.
 Só quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
-```typescript
+
 // request PUT /posts/:id
 // headers.authorization = "token jwt"
 // body JSON
@@ -161,30 +149,26 @@ Só quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
 
 // response
 // status 200 OK
-```
-
-## Delete post
-Endpoint protegido, requer um token jwt para acessá-lo.<br>
+Delete post
+Endpoint protegido, requer um token jwt para acessá-lo.
 Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer pessoa.
 
-```typescript
 // request DELETE /posts/:id
 // headers.authorization = "token jwt"
 
 // response
 // status 200 OK
-```
+Like or dislike post (mesmo endpoint faz as duas coisas)
+Endpoint protegido, requer um token jwt para acessá-lo.
+Quem criou o post não pode dar like ou dislike no mesmo.
 
-## Like or dislike post (mesmo endpoint faz as duas coisas)
+Caso dê um like em um post que já tenha dado like, o like é desfeito.
+Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.
 
-Endpoint protegido, requer um token jwt para acessá-lo.<br>
-Quem criou o post não pode dar like ou dislike no mesmo.<br><br>
-Caso dê um like em um post que já tenha dado like, o like é desfeito.<br>
-Caso dê um dislike em um post que já tenha dado dislike, o dislike é desfeito.<br><br>
-Caso dê um like em um post que tenha dado dislike, o like sobrescreve o dislike.<br>
+Caso dê um like em um post que tenha dado dislike, o like sobrescreve o dislike.
 Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like.
-### Like (funcionalidade 1)
-```typescript
+
+Like (funcionalidade 1)
 // request PUT /posts/:id/like
 // headers.authorization = "token jwt"
 // body JSON
@@ -194,10 +178,7 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 
 // response
 // status 200 OK
-```
-
-### Dislike (funcionalidade 2)
-```typescript
+Dislike (funcionalidade 2)
 // request PUT /posts/:id/like
 // headers.authorization = "token jwt"
 // body JSON
@@ -207,16 +188,17 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 
 // response
 // status 200 OK
-```
+Para entender a tabela likes_dislikes
+no SQLite, lógicas booleanas devem ser controladas via 0 e 1 (INTEGER)
 
-### Para entender a tabela likes_dislikes
-- no SQLite, lógicas booleanas devem ser controladas via 0 e 1 (INTEGER)
-- quando like valer 1 na tabela é porque a pessoa deu like no post
-    - na requisição like é true
-    
-- quando like valer 0 na tabela é porque a pessoa deu dislike no post
-    - na requisição like é false
-    
-- caso não exista um registro na tabela de relação, é porque a pessoa não deu like nem dislike
-- caso dê like em um post que já tenha dado like, o like é removido (deleta o item da tabela)
-- caso dê dislike em um post que já tenha dado dislike, o dislike é removido (deleta o item da tabela)
+quando like valer 1 na tabela é porque a pessoa deu like no post
+
+na requisição like é true
+quando like valer 0 na tabela é porque a pessoa deu dislike no post
+
+na requisição like é false
+caso não exista um registro na tabela de relação, é porque a pessoa não deu like nem dislike
+
+caso dê like em um post que já tenha dado like, o like é removido (deleta o item da tabela)
+
+caso dê dislike em um post que já tenha dado dislike, o dislike é removido (deleta o item da tabela)
