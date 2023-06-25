@@ -5,6 +5,8 @@ class User {
   public name: string;
   public email: string;
   public password: string;
+  static NORMAL: any;
+  role: any;
 
   constructor(name: string, email: string, password: string,) {
     this.id = uuidv4();

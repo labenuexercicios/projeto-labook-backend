@@ -1,6 +1,8 @@
 import express from 'express';
 import cors from 'cors';
-import { authRouter, postRouter } from './routes';
+import authRouter from './routes/authRouter';
+import postRouter from './routes/postRouter';
+
 
 const app = express();
 
