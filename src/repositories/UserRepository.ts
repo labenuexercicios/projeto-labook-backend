@@ -13,7 +13,7 @@ class UserRepository {
   private db: sqlite.Database;
 
   constructor() {
-    this.db = new sqlite.Database('path/to/your/database.db');
+    this.db = new sqlite.Database('./database.db');
   }
 
   findById(id: string): Promise<User | null> {
