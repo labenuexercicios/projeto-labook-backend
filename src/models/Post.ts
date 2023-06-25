@@ -7,15 +7,28 @@ interface PostData {
 }
 
 class Post {
+  [x: string]: any;
+  static getAll() {
+      throw new Error('Method not implemented.');
+  }
+  save() {
+      throw new Error('Method not implemented.');
+  }
+  static getById(id: any) {
+      throw new Error('Method not implemented.');
+  }
+  static deleteById(id: any) {
+      throw new Error('Method not implemented.');
+  }
   private db: sqlite.Database;
 
   constructor() {
-    this.db = new sqlite.Database('path/to/your/database.db');
+    this.db = new sqlite.Database('../database.db');
   }
 
   public getAll(): Promise<PostData[]> {
     return new Promise((resolve, reject) => {
-      this.db.all('SELECT * FROM posts', (error, rows) => {
+      this.db.all('SELECT * FROM posts', (error: Error | null, rows: PostData[]) => {
         if (error) {
           reject(error);
         } else {
@@ -27,7 +40,7 @@ class Post {
 
   public getById(id: string): Promise<PostData | null> {
     return new Promise((resolve, reject) => {
-      this.db.get('SELECT * FROM posts WHERE id = ?', [id], (error, row) => {
+      this.db.get('SELECT * FROM posts WHERE id = ?', [id], (error: Error | null, row: PostData) => {
         if (error) {
           reject(error);
         } else if (!row) {
@@ -39,7 +52,7 @@ class Post {
     });
   }
 
-  public save(post: PostData): Promise<void> {
+  public create(post: PostData): Promise<PostData> {
     return new Promise((resolve, reject) => {
       this.db.run(
         'INSERT INTO posts (id, title, content) VALUES (?, ?, ?)',
@@ -48,26 +61,44 @@ class Post {
           if (error) {
             reject(error);
           } else {
-            resolve();
+            resolve(post);
           }
         }
       );
     });
   }
 
-  public deleteById(id: string): Promise<void> {
+  public update(id: string, post: PostData): Promise<PostData | null> {
     return new Promise((resolve, reject) => {
-      this.db.run('DELETE FROM posts WHERE id = ?', [id], (error) => {
+      this.db.run(
+        'UPDATE posts SET title = ?, content = ? WHERE id = ?',
+        [post.title, post.content, id],
+        function (error) {
+          if (error) {
+            reject(error);
+          } else if (this.changes === 0) {
+            resolve(null);
+          } else {
+            resolve(post);
+          }
+        }
+      );
+    });
+  }
+
+  public delete(id: string): Promise<boolean> {
+    return new Promise((resolve, reject) => {
+      this.db.run('DELETE FROM posts WHERE id = ?', [id], function (error) {
         if (error) {
           reject(error);
+        } else if (this.changes === 0) {
+          resolve(false);
         } else {
-          resolve();
+          resolve(true);
         }
       });
     });
   }
-
-  // Outros métodos relevantes para o modelo Post
 }
 
 export default Post;

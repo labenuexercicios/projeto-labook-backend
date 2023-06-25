@@ -3,58 +3,75 @@ import Post from '../models/Post';
 
 class PostController {
   public async getPosts(req: Request, res: Response): Promise<void> {
-    // Lógica para obter os posts
-    const posts = await Post.getAll(); // Exemplo: método assíncrono para obter todos os posts
-    res.json(posts);
+    try {
+      const post = new Post();
+      const posts = await post.getAll();
+      res.status(200).json(posts);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 
   public async createPost(req: Request, res: Response): Promise<void> {
-    // Lógica para criar um novo post
-    const { title, content } = req.body;
-    const post = new Post(title, content); // Exemplo: criando uma nova instância de post
-    await post.save(); // Exemplo: salvando o post de forma assíncrona
-    res.json(post);
+    try {
+      const { id, title, content } = req.body;
+      const post = new Post();
+      const newPost = await post.create({ id, title, content });
+      res.status(201).json(newPost);
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
+    }
   }
 
   public async editPost(req: Request, res: Response): Promise<void> {
-    // Lógica para editar um post existente
-    const { id } = req.params;
-    const { title, content } = req.body;
-    const post = await Post.getById(id); // Exemplo: método assíncrono para obter um post pelo ID
-    if (!post) {
-      res.status(404).json({ message: 'Post not found' });
-    } else {
-      post.title = title; // Exemplo: atualizando o título do post
-      post.content = content; // Exemplo: atualizando o conteúdo do post
-      await post.save(); // Exemplo: salvando as alterações no post de forma assíncrona
-      res.json(post);
+    try {
+      const { id } = req.params;
+      const { title, content } = req.body;
+      const post = new Post();
+      const updatedPost = await post.update(id, {
+          title, content,
+          id: ''
+      });
+      if (updatedPost) {
+        res.status(200).json(updatedPost);
+      } else {
+        res.status(404).json({ message: 'Post not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 
   public async deletePost(req: Request, res: Response): Promise<void> {
-    // Lógica para excluir um post existente
-    const { id } = req.params;
-    const post = await Post.getById(id); // Exemplo: método assíncrono para obter um post pelo ID
-    if (!post) {
-      res.status(404).json({ message: 'Post not found' });
-    } else {
-      await Post.deleteById(id); // Exemplo: método assíncrono para excluir um post pelo ID
-      res.json({ message: 'Post deleted successfully' });
+    try {
+      const { id } = req.params;
+      const post = new Post();
+      const deleted = await post.delete(id);
+      if (deleted) {
+        res.status(204).send();
+      } else {
+        res.status(404).json({ message: 'Post not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 
   public async likeDislikePost(req: Request, res: Response): Promise<void> {
-    // Lógica para dar ou remover o like em um post
-    const { id } = req.params;
-    const post = await Post.getById(id); // Exemplo: método assíncrono para obter um post pelo ID
-    if (!post) {
-      res.status(404).json({ message: 'Post not found' });
-    } else {
-      post.toggleLike(); // Exemplo: método para alternar o estado do like no post
-      await post.save(); // Exemplo: salvando as alterações no post de forma assíncrona
-      res.json(post);
+    try {
+      const { id } = req.params;
+      const { like } = req.body;
+      const post = new Post();
+      const updatedPost = await post.likeDislike(id, like);
+      if (updatedPost) {
+        res.status(200).json(updatedPost);
+      } else {
+        res.status(404).json({ message: 'Post not found' });
+      }
+    } catch (error) {
+      res.status(500).json({ message: 'Internal server error' });
     }
   }
 }
 
-export default PostController;
+export default new PostController();
