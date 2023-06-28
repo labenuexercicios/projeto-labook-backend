@@ -166,6 +166,7 @@ Só quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
 ## Delete post
 Endpoint protegido, requer um token jwt para acessá-lo.<br>
 Só quem criou o post pode deletá-lo. Admins podem deletar o post de qualquer pessoa.
+- garanta que ele continue funcionando depois de implementar o LIKE e DISLIKE!
 
 ```typescript
 // request DELETE /posts/:id
