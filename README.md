@@ -28,8 +28,8 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 - Endpoints
     - [ ]  signup
     - [ ]  login
-    - [ ]  get posts
     - [ ]  create post
+    - [ ]  get posts
     - [ ]  edit post
     - [ ]  delete post
     - [ ]  like / dislike post
@@ -98,6 +98,22 @@ Endpoint público utilizado para login. Devolve um token jwt.
 }
 ```
 
+
+## Create post
+Endpoint protegido, requer um token jwt para acessá-lo.
+```typescript
+// request POST /posts
+// headers.authorization = "token jwt"
+// body JSON
+{
+    "content": "Partiu happy hour!"
+}
+
+// response
+// status 201 CREATED
+```
+
+
 ## Get posts
 Endpoint protegido, requer um token jwt para acessá-lo.
 ```typescript
@@ -134,19 +150,6 @@ Endpoint protegido, requer um token jwt para acessá-lo.
 ]
 ```
 
-## Create post
-Endpoint protegido, requer um token jwt para acessá-lo.
-```typescript
-// request POST /posts
-// headers.authorization = "token jwt"
-// body JSON
-{
-    "content": "Partiu happy hour!"
-}
-
-// response
-// status 201 CREATED
-```
 
 ## Edit post
 Endpoint protegido, requer um token jwt para acessá-lo.<br>
