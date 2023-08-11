@@ -23,7 +23,8 @@ export class UserBusiness {
     }
 
     public createUser = async (input: any) => {
-        const { id, name, email, password } = input
+        const { name, email, password } = input
+        const id: string = "u" + Math.floor(Math.random() * 256).toString()
 
         const userDBExists = await this.userDatabase.findUsers(id)
 

@@ -2,13 +2,13 @@ import { Request, Response } from "express"
 import { PostBusiness } from "../business/PostBusiness"
 import { BaseError } from "../errors/BaseError"
 import { ZodError } from "zod"
-import { EditUserSchema } from "../dtos/editUser.dtos"
+import { EditPostSchema } from "../dtos/editPost.dtos"
 
 export class PostController {
 
     constructor(private postBusiness: PostBusiness) { }
 
-    public getUsers = async (req: Request, res: Response) => {
+    public getPosts = async (req: Request, res: Response) => {
         try {
             const q = req.query.q as string | undefined
 
@@ -29,7 +29,7 @@ export class PostController {
     }
 
 
-    public createUser = async (req: Request, res: Response) => {
+    public createPost = async (req: Request, res: Response) => {
         try {
             const input = {
                 id: req.body.id,
@@ -38,7 +38,7 @@ export class PostController {
                 password: req.body.password
             }
 
-            const output = await this.postBusiness.createUser(input)
+            const output = await this.postBusiness.createPost(input)
 
             res.status(201).send(output)
         } catch (error) {
@@ -54,18 +54,14 @@ export class PostController {
         }
     }
 
-    public editUserById = async (req: Request, res: Response) => {
+    public editPostById = async (req: Request, res: Response) => {
       try {
   
-        const input = EditUserSchema.parse({
-          idToEdit: req.params.id,
-          id: req.body.id,
-          name: req.body.name,
-          email: req.body.email,
-          password: req.body.password,
+        const input = EditPostSchema.parse({
+          content: req.body.content
         })
   
-        const output = await this.postBusiness.editUser(input)
+        const output = await this.postBusiness.editPost(input)
   
         res.status(200).send(output)
       } catch (error) {
@@ -82,14 +78,14 @@ export class PostController {
     }
 
     
-  public deleteUserById = async (req: Request, res: Response) => {
+  public deletePostById = async (req: Request, res: Response) => {
     try {
 
       const input = {
         idToDelete: req.params.id
       }
 
-      const output = await this.postBusiness.deleteUser(input)
+      const output = await this.postBusiness.deletePost(input)
 
       res.status(200).send(output)
     } catch (error) {

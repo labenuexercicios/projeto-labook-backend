@@ -25,7 +25,8 @@ export class PostBusiness {
     }
 
     public createPost = async (input: any) => {
-        const { id, creatorId, content, likes, dislikes } = input
+        const { creatorId, content, likes, dislikes } = input
+        const id: string = "p" + Math.floor(Math.random() * 256).toString()
 
         const postDBExists = await this.postDatabase.findPosts(id)
 
@@ -68,11 +69,7 @@ export class PostBusiness {
 
       const {
         idToEdit,
-        id,
-        creatorId,
         content,
-        likes,
-        dislikes
       } = input
   
       const postToEditDB = await this.postDatabase.findPostById(idToEdit)
@@ -81,7 +78,7 @@ export class PostBusiness {
         throw new NotFoundError("'id' para editar não existe")
       }
   
-      const post = new Post(
+      const updatedPost = new Post(
         postToEditDB.id,
         postToEditDB.creatorId,
         postToEditDB.content,
@@ -91,17 +88,17 @@ export class PostBusiness {
         postToEditDB.updatedAt 
       )
   
-      content && post.setContent(content)
-      post.setUpdatedAt(new Date().toISOString())
+      content && updatedPost.setContent(content)
+      updatedPost.setUpdatedAt(new Date().toISOString())
   
       const updatePostDB: PostDB = {
-        id: post.getId(),
-        creatorId: post.getCreatorId(),
-        content: post.getContent(),
-        likes: post.getLikes(),
-        dislikes: post.getDislikes(),
-        createdAt: post.getCreatedAt(),
-        updatedAt: post.getUpdatedAt()
+        id: updatedPost.getId(),
+        creatorId: updatedPost.getCreatorId(),
+        content: updatedPost.getContent(),
+        likes: updatedPost.getLikes(),
+        dislikes: updatedPost.getDislikes(),
+        createdAt: updatedPost.getCreatedAt(),
+        updatedAt: updatedPost.getUpdatedAt()
       }
   
       await this.postDatabase.updatePostById(idToEdit, updatePostDB)
@@ -109,13 +106,13 @@ export class PostBusiness {
       const output = {
         message: "Postagem editada com sucesso",
         post: {
-          id: post.getId(),
-          creatorId: post.getCreatorId(),
-          content: post.getContent(),
-          likes: post.getLikes(),
-          dislikes: post.getDislikes(),
-          createdAt: post.getCreatedAt(),
-          updatedAt: post.getUpdatedAt()
+          id: updatedPost.getId(),
+          creatorId: updatedPost.getCreatorId(),
+          content: updatedPost.getContent(),
+          likes: updatedPost.getLikes(),
+          dislikes: updatedPost.getDislikes(),
+          createdAt: updatedPost.getCreatedAt(),
+          updatedAt: updatedPost.getUpdatedAt()
         }
       }
   

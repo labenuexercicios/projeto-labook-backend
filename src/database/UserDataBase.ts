@@ -2,15 +2,16 @@ import { UserDB } from "../models/User";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class UserDatabase extends BaseDatabase {
-  public static TABLE_USERS = "users"
+  
+  private static TABLE_USERS = "users"
 
-  public async insertUser(newUserDB: UserDB) {
+  public insertUser = async (input: UserDB):Promise<void> => {
     await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
-      .insert(newUserDB)
+      .insert(input)
   }
 
-  public async findUsers(q: string | undefined) {
+  public findUsers = async (q: string | undefined) => {
     if (q) {
       const result: UserDB[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
@@ -26,7 +27,7 @@ export class UserDatabase extends BaseDatabase {
     }
   }
 
-  public async findUserById(id: string) {
+  public findUserById = async (id: string) => {
     const [userDB]: UserDB[] | undefined[] = await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
       .where({ id })
@@ -34,14 +35,14 @@ export class UserDatabase extends BaseDatabase {
     return userDB
   }
 
-  public async updateUserById(idToEdit: string, userDB: UserDB) {
+  public updateUserById = async (idToEdit: string, userDB: UserDB) => {
     await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
       .update(userDB)
       .where({ id: idToEdit })
   }
 
-  public async deleteUserById(idToDelete: string) {
+  public deleteUserById = async (idToDelete: string) => {
     await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
       .delete()

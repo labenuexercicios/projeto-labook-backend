@@ -2,15 +2,16 @@ import { PostDB } from "../models/Post";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class PostDatabase extends BaseDatabase {
-  public static TABLE_POSTS = "posts"
 
-  public async insertPost(newPostDB: PostDB) {
+  private static TABLE_POSTS = "posts"
+
+  public insertPost = async (newPostDB: PostDB):Promise<void> => {
     await BaseDatabase
       .connection(PostDatabase.TABLE_POSTS)
       .insert(newPostDB)
   }
 
-  public async findPosts(q: string | undefined) {
+  public findPosts = async (q: string | undefined) => {
     if (q) {
       const result: PostDB[] = await BaseDatabase
         .connection(PostDatabase.TABLE_POSTS)
@@ -26,7 +27,7 @@ export class PostDatabase extends BaseDatabase {
     }
   }
 
-  public async findPostById(id: string) {
+  public findPostById = async (id: string) => {
     const [postDB]: PostDB[] | undefined[] = await BaseDatabase
       .connection(PostDatabase.TABLE_POSTS)
       .where({ id })
@@ -34,14 +35,14 @@ export class PostDatabase extends BaseDatabase {
     return postDB
   }
 
-  public async updatePostById(idToEdit: string, postDB: PostDB) {
+  public updatePostById = async (idToEdit: string, postDB: PostDB) => {
     await BaseDatabase
       .connection(PostDatabase.TABLE_POSTS)
       .update(postDB)
       .where({ id: idToEdit })
   }
 
-  public async deletePostById(idToDelete: string) {
+  public deletePostById = async (idToDelete: string) => {
     await BaseDatabase
       .connection(PostDatabase.TABLE_POSTS)
       .delete()
