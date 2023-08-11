@@ -11,11 +11,12 @@ export class UserDatabase extends BaseDatabase {
       .insert(input)
   }
 
-  public findUsers = async (q: string | undefined) => {
-    if (q) {
+  public findUsers = async (name?: string | undefined) => {
+
+    if (name) {
       const result: UserDB[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
-        .where("name", "LIKE", `%${q}%`)
+        .where("name", "LIKE", `%${name}%`)
 
       return result
 

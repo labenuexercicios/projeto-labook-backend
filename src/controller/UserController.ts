@@ -10,11 +10,16 @@ export class UserController {
 
     public getUsers = async (req: Request, res: Response) => {
         try {
-            const q = req.query.q as string | undefined
+            const name = req.query.name as string | undefined
 
-            const output = await this.userBusiness.getUsers(q)
+            if(name){
+              const output = await this.userBusiness.getUsers(name)
+              res.status(200).send(output)
+            } else {
+              const output = await this.userBusiness.getUsers()
+              res.status(200).send(output)
+            }
 
-            res.status(200).send(output)
         } catch (error) {
             console.log(error)
 

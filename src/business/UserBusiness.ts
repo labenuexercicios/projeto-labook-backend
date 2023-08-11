@@ -7,9 +7,15 @@ export class UserBusiness {
 
     constructor(private userDatabase: UserDatabase) { }
 
-    public getUsers = async (q: string | undefined) => {
+    public getUsers = async (name?: string | undefined) => {
 
-        const usersDB = await this.userDatabase.findUsers(q)
+        let usersDB;
+
+        if(name){
+          usersDB = await this.userDatabase.findUsers(name)
+        } else {
+          usersDB = await this.userDatabase.findUsers()
+        }
 
         const users: User[] = usersDB.map((userDB) => new User(
             userDB.id,

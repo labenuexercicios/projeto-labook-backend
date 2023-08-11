@@ -31,8 +31,8 @@ CREATE TABLE if NOT EXISTS likes_dislikes(
 
 INSERT into users(id, name, email, password, role, created_at)
 VALUES
-()
-()
-()
-()
-();
+("u001", "Samuel", "samuel@email.com", "samuelsenha", "admin", DATETIME('now')),
+("u002", "Flavia", "flavia@email.com", "flaviasenha", "moderator", DATETIME('now')),
+("u003", "Julia", "julia@email.com", "juliasenha", "student", DATETIME('now')),
+("u004", "Rodrigo", "rodrigo@email.com", "rodrigosenha", "student", DATETIME('now')),
+("u005", "Pedro", "pedro@email.com", "pedrosenha", "student", DATETIME('now'));
