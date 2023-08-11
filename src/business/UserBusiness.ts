@@ -16,6 +16,7 @@ export class UserBusiness {
             userDB.name,
             userDB.email,
             userDB.password,
+            userDB.role,
             userDB.createdAt
         ))
 
@@ -23,7 +24,7 @@ export class UserBusiness {
     }
 
     public createUser = async (input: any) => {
-        const { name, email, password } = input
+        const { name, email, password, role } = input
         const id: string = "u" + Math.floor(Math.random() * 256).toString()
 
         const userDBExists = await this.userDatabase.findUsers(id)
@@ -37,6 +38,7 @@ export class UserBusiness {
             name,
             email,
             password,
+            role,
             new Date().toISOString(),
         ) 
 
@@ -45,6 +47,7 @@ export class UserBusiness {
             name: newUser.getName(),
             email: newUser.getEmail(),
             password: newUser.getPassword(),
+            role: newUser.getRole(),
             createdAt: newUser.getCreatedAt()
         }
 
@@ -66,7 +69,8 @@ export class UserBusiness {
         id,
         name,
         email,
-        password
+        password,
+        role
       } = input
   
       const userToEditDB = await this.userDatabase.findUserById(idToEdit)
@@ -80,6 +84,7 @@ export class UserBusiness {
         userToEditDB.name,
         userToEditDB.email,
         userToEditDB.password,
+        userToEditDB.role,
         userToEditDB.createdAt
       )
   
@@ -91,6 +96,7 @@ export class UserBusiness {
         name: user.getName(),
         email: user.getEmail(),
         password: user.getPassword(),
+        role: user.getRole(),
         createdAt: user.getCreatedAt()
       }
   
@@ -103,6 +109,7 @@ export class UserBusiness {
           name: user.getName(),
           email: user.getEmail(),
           password: user.getPassword(),
+          role: user.getRole(),
           createdAt: user.getCreatedAt()
         }
       }
@@ -129,6 +136,7 @@ export class UserBusiness {
         userToDeleteDB.name,
         userToDeleteDB.email,
         userToDeleteDB.password,
+        userToDeleteDB.role,
         userToDeleteDB.createdAt
     )
 
@@ -141,6 +149,7 @@ export class UserBusiness {
         name: user.getName(),
         email: user.getEmail(),
         password: user.getPassword(),
+        role: user.getRole(),
         createdAt: user.getCreatedAt()
       }
     }

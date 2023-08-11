@@ -28,3 +28,11 @@ CREATE TABLE if NOT EXISTS likes_dislikes(
     ON UPDATE CASCADE
     ON DELETE CASCADE   
 );
+
+INSERT into users(id, name, email, password, role, created_at)
+VALUES
+()
+()
+()
+()
+();
