@@ -4,11 +4,21 @@ export interface PostDB {
     content: string,
     likes: number,
     dislikes: number,
+    created_at: string,
+    updated_at: string
+}
+
+export interface PostModel {
+    id: string,
+    creatorId: string,
+    content: string,
+    likes: number,
+    dislikes: number,
     createdAt: string,
     updatedAt: string
 }
-  
-  export class Post {    
+
+export class Post {
     constructor(
         private id: string,
         private creatorId: string,
@@ -17,12 +27,12 @@ export interface PostDB {
         private dislikes: number,
         private createdAt: string,
         private updatedAt: string
-    ) {}
+    ) { }
 
     public getId(): string {
         return this.id
     }
-    
+
     public setId(value: string): void {
         this.id = value
     }
@@ -74,4 +84,30 @@ export interface PostDB {
     public setUpdatedAt(value: string): void {
         this.updatedAt = value
     }
+
+    public toDBModel(): PostDB {
+        return {
+            id: this.id,
+            creatorId: this.creatorId,
+            content: this.content,
+            likes: this.likes,
+            dislikes: this.dislikes,
+            created_at: this.createdAt,
+            updated_at: this.updatedAt
+        }
+    }
+
+    // para facilitar nossa vida, temos o método que gera um ProductModel
+    public toBusinessModel(): PostModel {
+        return {
+            id: this.id,
+            creatorId: this.creatorId,
+            content: this.content,
+            likes: this.likes,
+            dislikes: this.dislikes,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt
+        }
+    }
+
 }

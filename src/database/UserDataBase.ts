@@ -28,25 +28,25 @@ export class UserDatabase extends BaseDatabase {
     }
   }
 
-  public findUserById = async (id: string) => {
+  public findUserByEmail = async (email: string) => {
     const [userDB]: UserDB[] | undefined[] = await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
-      .where({ id })
+      .where({ email })
 
     return userDB
   }
 
-  public updateUserById = async (idToEdit: string, userDB: UserDB) => {
+  public updateUserByEmail = async (emailToEdit: string, userDB: UserDB) => {
     await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
       .update(userDB)
-      .where({ id: idToEdit })
+      .where({ email: emailToEdit })
   }
 
-  public deleteUserById = async (idToDelete: string) => {
+  public deleteUserByEmail = async (emailToDelete: string) => {
     await BaseDatabase
       .connection(UserDatabase.TABLE_USERS)
       .delete()
-      .where({ id: idToDelete })
+      .where({ email: emailToDelete })
   }
 }

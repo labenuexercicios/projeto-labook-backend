@@ -1,37 +1,26 @@
 import { UserDatabase } from "../database/UserDataBase"
 import { UserDB, User } from "../models/User"
 import { NotFoundError } from "../errors/NotFoundError"
+import { BadRequestError } from "../errors/BadRequestError"
+import { LoginInputDTO, LoginOutputDTO } from "../dtos/login.dto"
+import { SignupInputDTO, SignupOutputDTO } from "../dtos/signup.dto"
 import { EditUserInputDTO, EditUsertOutputDTO } from "../dtos/editUser.dtos"
+import { TokenManager } from "../services/TokenManager"
+import { IdGenerator } from "../services/idGenerator"
 
 export class UserBusiness {
 
-    constructor(private userDatabase: UserDatabase) { }
+    constructor(
+      private userDatabase: UserDatabase,
+      private tokenManager: TokenManager,
+      private idGenerator: IdGenerator
+      ) { }
 
-    public getUsers = async (name?: string | undefined) => {
-
-        let usersDB;
-
-        if(name){
-          usersDB = await this.userDatabase.findUsers(name)
-        } else {
-          usersDB = await this.userDatabase.findUsers()
-        }
-
-        const users: User[] = usersDB.map((userDB) => new User(
-            userDB.id,
-            userDB.name,
-            userDB.email,
-            userDB.password,
-            userDB.role,
-            userDB.createdAt
-        ))
-
-        return users
-    }
-
-    public createUser = async (input: any) => {
+      public signup = async (
+        input: SignupInputDTO
+      ): Promise<SignupOutputDTO> => {
         const { name, email, password, role } = input
-        const id: string = "u" + Math.floor(Math.random() * 256).toString()
+        const id = this.idGenerator.generate()
 
         const userDBExists = await this.userDatabase.findUsers(id)
 
@@ -45,7 +34,7 @@ export class UserBusiness {
             email,
             password,
             role,
-            new Date().toISOString(),
+            new Date().toISOString()
         ) 
 
         const newUserDB: UserDB = {
@@ -54,24 +43,76 @@ export class UserBusiness {
             email: newUser.getEmail(),
             password: newUser.getPassword(),
             role: newUser.getRole(),
-            createdAt: newUser.getCreatedAt()
+            created_at: newUser.getCreatedAt()
         }
 
         await this.userDatabase.insertUser(newUserDB)
 
+        const token = this.tokenManager.createToken({
+          id: newUser.getId(),
+          role: newUser.getRole(),
+          name: newUser.getName()
+        })
+
         const output = {
             message: "Cadastro realizado com sucesso",
-            user: newUser
+            user: newUser,
+            token
         }
 
         return output
     }
 
-  
+    
+  public login = async (
+    input: LoginInputDTO
+  ): Promise<LoginOutputDTO> => {
+    const { email, password } = input
+
+    const userDB = await this.userDatabase.findUserByEmail(email)
+
+    if (!userDB) {
+      throw new NotFoundError("'email' não encontrado")
+    }
+
+    if (password !== userDB.password) {
+      throw new BadRequestError("'email' ou 'password' incorretos")
+    }
+
+    const output: LoginOutputDTO = {
+      message: "Login realizado com sucesso",
+      token: "token"
+    }
+
+    return output
+  }
+
+    public getUsers = async (name?: string | undefined) => {
+
+      let usersDB;
+
+      if(name){
+        usersDB = await this.userDatabase.findUsers(name)
+      } else {
+        usersDB = await this.userDatabase.findUsers()
+      }
+
+      const users: User[] = usersDB.map((userDB) => new User(
+          userDB.id,
+          userDB.name,
+          userDB.email,
+          userDB.password,
+          userDB.role,
+          userDB.created_at
+      ))
+
+      return users
+  }
+
     public editUser = async (input: EditUserInputDTO): Promise<EditUsertOutputDTO> => {
 
       const {
-        idToEdit,
+        emailToEdit,
         id,
         name,
         email,
@@ -79,7 +120,7 @@ export class UserBusiness {
         role
       } = input
   
-      const userToEditDB = await this.userDatabase.findUserById(idToEdit)
+      const userToEditDB = await this.userDatabase.findUserByEmail(emailToEdit)
   
       if (!userToEditDB) {
         throw new NotFoundError("'id' para editar não existe")
@@ -91,7 +132,7 @@ export class UserBusiness {
         userToEditDB.email,
         userToEditDB.password,
         userToEditDB.role,
-        userToEditDB.createdAt
+        userToEditDB.created_at,
       )
   
       email && user.setEmail(email)
@@ -103,10 +144,10 @@ export class UserBusiness {
         email: user.getEmail(),
         password: user.getPassword(),
         role: user.getRole(),
-        createdAt: user.getCreatedAt()
+        created_at: user.getCreatedAt()
       }
   
-      await this.userDatabase.updateUserById(idToEdit, updatedUserDB)
+      await this.userDatabase.updateUserByEmail(emailToEdit, updatedUserDB)
   
       const output = {
         message: "Usuário editado com sucesso",
@@ -125,16 +166,16 @@ export class UserBusiness {
     }
 
   public deleteUser = async (input: any) => {
-    const { idToDelete } = input
+    const { emailToDelete } = input
 
-    const userToDeleteDB = await this.userDatabase.findUserById(idToDelete)
+    const userToDeleteDB = await this.userDatabase.findUserByEmail(emailToDelete)
 
-    if (!idToDelete) {
-      throw new NotFoundError("por favor, insira um id")
+    if (!emailToDelete) {
+      throw new NotFoundError("por favor, insira um email")
     }
 
     if (!userToDeleteDB) {
-        throw new NotFoundError("'id' para deletar não existe")
+        throw new NotFoundError("'email' para deletar não existe")
       }
 
     const user = new User(
@@ -143,10 +184,10 @@ export class UserBusiness {
         userToDeleteDB.email,
         userToDeleteDB.password,
         userToDeleteDB.role,
-        userToDeleteDB.createdAt
+        userToDeleteDB.created_at
     )
 
-    await this.userDatabase.deleteUserById(userToDeleteDB.id)
+    await this.userDatabase.deleteUserByEmail(userToDeleteDB.email)
 
     const output = {
       message: "Usuário deletado com sucesso",

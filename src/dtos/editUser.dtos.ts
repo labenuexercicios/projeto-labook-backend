@@ -1,7 +1,7 @@
 import z from 'zod'
 
 export interface EditUserInputDTO {
-    idToEdit: string,
+    emailToEdit: string,
     id?: string,
     name?:string,
     email?: string,
@@ -21,7 +21,7 @@ export interface EditUsertOutputDTO {
     }
 }
 export const EditUserSchema = z.object({
-    idToEdit: z.string().min(1),
+    emailToEdit: z.string().min(11),
     id: z.string().min(1).optional(),
     name: z.string().min(2).optional(),
     email: z.string().min(11).optional(),

@@ -17,8 +17,8 @@ export class PostBusiness {
             postDB.content,
             postDB.likes,
             postDB.dislikes,
-            postDB.createdAt,
-            postDB.updatedAt
+            postDB.created_at,
+            postDB.updated_at
         ))
 
         return users
@@ -50,8 +50,8 @@ export class PostBusiness {
             content: newPost.getContent(),
             likes: newPost.getLikes(),
             dislikes: newPost.getDislikes(),
-            createdAt: newPost.getCreatedAt(),
-            updatedAt: newPost.getUpdatedAt()
+            created_at: newPost.getCreatedAt(),
+            updated_at: newPost.getUpdatedAt()
         }
 
         await this.postDatabase.insertPost(newPostDB)
@@ -84,8 +84,8 @@ export class PostBusiness {
         postToEditDB.content,
         postToEditDB.likes,
         postToEditDB.dislikes,
-        postToEditDB.createdAt,
-        postToEditDB.updatedAt 
+        postToEditDB.created_at,
+        postToEditDB.updated_at 
       )
   
       content && updatedPost.setContent(content)
@@ -97,8 +97,8 @@ export class PostBusiness {
         content: updatedPost.getContent(),
         likes: updatedPost.getLikes(),
         dislikes: updatedPost.getDislikes(),
-        createdAt: updatedPost.getCreatedAt(),
-        updatedAt: updatedPost.getUpdatedAt()
+        created_at: updatedPost.getCreatedAt(),
+        updated_at: updatedPost.getUpdatedAt()
       }
   
       await this.postDatabase.updatePostById(idToEdit, updatePostDB)
@@ -139,8 +139,8 @@ export class PostBusiness {
         postToDeleteDB.content,
         postToDeleteDB.likes,
         postToDeleteDB.dislikes,
-        postToDeleteDB.createdAt,
-        postToDeleteDB.updatedAt 
+        postToDeleteDB.created_at,
+        postToDeleteDB.updated_at 
       )
 
     await this.postDatabase.deletePostById(postToDeleteDB.id)
