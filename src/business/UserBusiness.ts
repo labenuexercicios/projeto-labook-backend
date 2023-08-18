@@ -64,9 +64,7 @@ export class UserBusiness {
     }
 
     
-  public login = async (
-    input: LoginInputDTO
-  ): Promise<LoginOutputDTO> => {
+  public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
     const { email, password } = input
 
     const userDB = await this.userDatabase.findUserByEmail(email)
@@ -76,12 +74,18 @@ export class UserBusiness {
     }
 
     if (password !== userDB.password) {
-      throw new BadRequestError("'email' ou 'password' incorretos")
+      throw new BadRequestError("email e senha não conferem")
     }
+
+    const token = this.tokenManager.createToken({
+      id: userDB.id,
+      role: userDB.role,
+      name: userDB.name
+    })
 
     const output: LoginOutputDTO = {
       message: "Login realizado com sucesso",
-      token: "token"
+      token: token
     }
 
     return output

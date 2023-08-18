@@ -5,6 +5,7 @@ import { userRouter } from './router/userRouter'
 import { postRouter } from './router/postRouter'
 
 dotenv.config()
+
 const app = express()
 
 app.use(express.json())

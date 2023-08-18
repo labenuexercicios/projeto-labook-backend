@@ -7,8 +7,6 @@ import { IdGenerator } from "../services/idGenerator"
 
 export const userRouter = express.Router()
 
-
-
 const userController = new UserController(
     new UserBusiness(
         new UserDatabase(), 
@@ -18,6 +16,7 @@ const userController = new UserController(
     )
 
 userRouter.get("/", userController.getUsers)
-userRouter.post("/", userController.signup)
-userRouter.put("/:id", userController.editUserByEmail)
-userRouter.delete("/:id", userController.deleteUserByEmail)
+userRouter.post("/signup", userController.signup)
+userRouter.post("/login", userController.login)
+userRouter.put("/:email", userController.editUserByEmail)
+userRouter.delete("/:email", userController.deleteUserByEmail)
