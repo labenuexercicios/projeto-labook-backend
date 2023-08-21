@@ -1,0 +1,28 @@
+
+
+
+3 tabelas:
+
+
+users -
+id text unique not null,
+name text not null,
+email text unique not null,
+password text not null,
+role(funcao) text not null,
+created_at text not null
+
+posts -
+id text unique not null,
+creator_id text unique not null,
+content(mensagem) text not null,
+likes integer not null,
+dislikes integer not null,
+created_at text not null,
+update_at text not null,
+foreign key (creator_id) references users(id)
+
+likes_dislikes -
+user_id text not null,
+post_id text not null,
+like integer not null
