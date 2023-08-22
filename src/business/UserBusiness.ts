@@ -7,21 +7,27 @@ import { SignupInputDTO, SignupOutputDTO } from "../dtos/signup.dto"
 import { EditUserInputDTO, EditUsertOutputDTO } from "../dtos/editUser.dtos"
 import { TokenManager } from "../services/TokenManager"
 import { IdGenerator } from "../services/idGenerator"
+import { HashManager } from "../services/HashManager"
+import { USER_ROLES } from "../models/User"
 
 export class UserBusiness {
 
     constructor(
       private userDatabase: UserDatabase,
       private tokenManager: TokenManager,
-      private idGenerator: IdGenerator
+      private idGenerator: IdGenerator,
+      private hashManager: HashManager
       ) { }
 
       public signup = async (
         input: SignupInputDTO
       ): Promise<SignupOutputDTO> => {
-        const { name, email, password, role } = input
+        const { name, email, password } = input
+        
         const id = this.idGenerator.generate()
-
+				
+        const hashedPassword = await this.hashManager.hash(password)
+        
         const userDBExists = await this.userDatabase.findUsers(id)
 
         if (userDBExists) {
@@ -32,8 +38,8 @@ export class UserBusiness {
             id,
             name,
             email,
-            password,
-            role,
+            hashedPassword,
+            USER_ROLES.NORMAL,
             new Date().toISOString()
         ) 
 
@@ -73,10 +79,13 @@ export class UserBusiness {
       throw new NotFoundError("'email' não encontrado")
     }
 
-    if (password !== userDB.password) {
-      throw new BadRequestError("email e senha não conferem")
-    }
+    const hashedPassword = userDB.password
+    const isPasswordCorrect = await this.hashManager.compare(password, hashedPassword)
 
+		if (!isPasswordCorrect) {
+      throw new BadRequestError("'email' ou 'password' incorretos")
+    }
+    
     const token = this.tokenManager.createToken({
       id: userDB.id,
       role: userDB.role,
@@ -117,11 +126,9 @@ export class UserBusiness {
 
       const {
         emailToEdit,
-        id,
         name,
         email,
-        password,
-        role
+        password
       } = input
   
       const userToEditDB = await this.userDatabase.findUserByEmail(emailToEdit)
@@ -140,6 +147,7 @@ export class UserBusiness {
       )
   
       email && user.setEmail(email)
+      name && user.setName(name)
       password && user.setPassword(password)
   
       const updatedUserDB: UserDB = {
