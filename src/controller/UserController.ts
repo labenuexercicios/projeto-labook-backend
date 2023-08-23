@@ -2,9 +2,11 @@ import { Request, Response } from "express"
 import { UserBusiness } from "../business/UserBusiness"
 import { BaseError } from "../errors/BaseError"
 import { ZodError } from "zod"
-import { EditUserSchema } from "../dtos/editUser.dtos"
-import { SignupSchema } from "../dtos/signup.dto"
-import { LoginSchema } from "../dtos/login.dto"
+import { EditUserSchema } from "../dtos/Users/editUser.dto"
+import { SignupSchema } from "../dtos/Users/signup.dto"
+import { LoginSchema } from "../dtos/Users/login.dto"
+import { GetUsersSchema } from "../dtos/Users/getUsers.dto"
+import { DeleteUserSchema } from "../dtos/Users/deleteUser.dto"
 
 export class UserController {
 
@@ -12,15 +14,13 @@ export class UserController {
 
     public getUsers = async (req: Request, res: Response) => {
         try {
-            const name = req.query.name as string | undefined
+          const input = GetUsersSchema.parse({
+            name: req.query.name,
+            token: req.headers.authorization
+        })
 
-            if(name){
-              const output = await this.userBusiness.getUsers(name)
+              const output = await this.userBusiness.getUsers(input)
               res.status(200).send(output)
-            } else {
-              const output = await this.userBusiness.getUsers()
-              res.status(200).send(output)
-            }
 
         } catch (error) {
             console.log(error)
@@ -35,7 +35,7 @@ export class UserController {
         }
     }
 
-
+  
     public signup = async (req: Request, res: Response) => {
 
         try {
@@ -95,6 +95,7 @@ export class UserController {
           name: req.body.name,
           email: req.body.email,
           password: req.body.password,
+          token: req.headers.authorization
         })
   
         const output = await this.userBusiness.editUser(input)
@@ -117,9 +118,10 @@ export class UserController {
   public deleteUserByEmail = async (req: Request, res: Response) => {
     try {
 
-      const input = {
-        emailToDelete: req.params.email
-      }
+      const input = DeleteUserSchema.parse({
+        emailToDelete: req.params.email,
+        token: req.headers.authorization
+      })
 
       const output = await this.userBusiness.deleteUser(input)
 

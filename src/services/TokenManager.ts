@@ -1,11 +1,12 @@
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
+import { USER_ROLES } from '../models/User'
 
 dotenv.config()
 
 export interface TokenPayload {
     id: string,
-    role: string,
+    role: USER_ROLES,
     name: string
 }
 
