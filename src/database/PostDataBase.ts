@@ -1,36 +1,43 @@
-import { PostDB } from "../models/Post";
+import { PostDB, PostModel } from "../models/Post";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class PostDatabase extends BaseDatabase {
 
   private static TABLE_POSTS = "posts"
 
-  public insertPost = async (newPostDB: PostDB):Promise<void> => {
+  public createPost = async (newPostDB: PostDB): Promise<void> => {
     await BaseDatabase
       .connection(PostDatabase.TABLE_POSTS)
       .insert(newPostDB)
   }
 
-  public findPosts = async (q: string | undefined) => {
-    if (q) {
-      const result: PostDB[] = await BaseDatabase
+  public findPosts = async (content: string) => {
+
+    let result: PostModel[];
+
+    if (content) {
+      result = await BaseDatabase
         .connection(PostDatabase.TABLE_POSTS)
-        .where("content", "LIKE", `%${q}%`)
-
-      return result
-
+        .where("content", "LIKE", `%${content}%`)
     } else {
-      const result: PostDB[] = await BaseDatabase
+      result = await BaseDatabase
         .connection(PostDatabase.TABLE_POSTS)
-
-      return result
     }
+    return result
   }
 
   public findPostById = async (id: string) => {
-    const [postDB]: PostDB[] | undefined[] = await BaseDatabase
+    const [result]: PostDB[] | undefined[] = await BaseDatabase
       .connection(PostDatabase.TABLE_POSTS)
       .where({ id })
+
+    return result
+  }
+
+  public findUserPosts = async (creatorId: string) => {
+    const [postDB]: PostDB[] | undefined[] = await BaseDatabase
+      .connection(PostDatabase.TABLE_POSTS)
+      .where({ creator_id: creatorId })
 
     return postDB
   }

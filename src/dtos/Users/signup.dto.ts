@@ -15,9 +15,7 @@ export interface SignupOutputDTO {
 }
 
 export const SignupSchema = z.object({
-  id: z.string().min(1),
   name: z.string().min(2),
-  email: z.string().email(),
+  email: z.string().min(11),
   password: z.string().min(4),
-  role: z.string().min(5)
 }).transform(data => data as SignupInputDTO)

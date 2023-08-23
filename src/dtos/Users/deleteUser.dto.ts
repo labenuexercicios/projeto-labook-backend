@@ -6,7 +6,7 @@ export interface DeleteUserInputDTO {
     token: string
 }
 
-export interface DeleteUsertOutputDTO {
+export interface DeleteUserOutputDTO {
     message: string;
     user: {
         id: string,

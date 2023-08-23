@@ -10,12 +10,15 @@ export interface PostDB {
 
 export interface PostModel {
     id: string,
-    creatorId: string,
     content: string,
     likes: number,
     dislikes: number,
     createdAt: string,
-    updatedAt: string
+    updatedAt: string,
+    creator: {
+        id: string,
+        name: string
+    }
 }
 
 export class Post {
@@ -94,19 +97,6 @@ export class Post {
             dislikes: this.dislikes,
             created_at: this.createdAt,
             updated_at: this.updatedAt
-        }
-    }
-
-    // para facilitar nossa vida, temos o método que gera um ProductModel
-    public toBusinessModel(): PostModel {
-        return {
-            id: this.id,
-            creatorId: this.creatorId,
-            content: this.content,
-            likes: this.likes,
-            dislikes: this.dislikes,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt
         }
     }
 

@@ -3,7 +3,6 @@ import { USER_ROLES } from '../../models/User';
 
 export interface EditUserInputDTO {
     emailToEdit: string,
-    id?: string,
     name?:string,
     email?: string,
     role?: USER_ROLES,
@@ -25,7 +24,6 @@ export interface EditUsertOutputDTO {
 }
 export const EditUserSchema = z.object({
     emailToEdit: z.string().min(11),
-    id: z.string().min(1).optional(),
     name: z.string().min(2).optional(),
     email: z.string().min(11).optional(),
     password: z.string().min(6).optional(),

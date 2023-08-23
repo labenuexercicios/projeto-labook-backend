@@ -40,11 +40,9 @@ export class UserController {
 
         try {
             const input = SignupSchema.parse({
-                id: req.body.id,
                 name: req.body.name,
                 email: req.body.email,
                 password: req.body.password,
-                role: req.body.role
             })
 
             const output = await this.userBusiness.signup(input)

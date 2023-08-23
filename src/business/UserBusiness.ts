@@ -10,7 +10,7 @@ import { LoginInputDTO, LoginOutputDTO } from "../dtos/Users/login.dto"
 import { SignupInputDTO, SignupOutputDTO } from "../dtos/Users/signup.dto"
 import { EditUserInputDTO, EditUsertOutputDTO } from "../dtos/Users/editUser.dto"
 import { GetUsersInputDTO, GetUsersOutputDTO } from "../dtos/Users/getUsers.dto"
-import { DeleteUserInputDTO, DeleteUsertOutputDTO } from "../dtos/Users/deleteUser.dto"
+import { DeleteUserInputDTO, DeleteUserOutputDTO } from "../dtos/Users/deleteUser.dto"
 
 
 export class UserBusiness {
@@ -74,6 +74,7 @@ export class UserBusiness {
 
 
   public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
+    
     const { email, password } = input
 
     const userDB = await this.userDatabase.findUserByEmail(email)
@@ -161,6 +162,9 @@ export class UserBusiness {
       throw new BadRequestError("token inválido")
     }
 
+    if (!payload.role.includes(USER_ROLES.ADMIN) || !payload.role.includes(USER_ROLES.NORMAL)) {
+      throw new BadRequestError("somente usuários logados podem acessar esse recurso")
+    }
 
     if (!userToEditDB) {
       throw new NotFoundError("'id' para editar não existe")
@@ -211,7 +215,7 @@ export class UserBusiness {
 
   }
 
-  public deleteUser = async (input: DeleteUserInputDTO): Promise<DeleteUsertOutputDTO>  => {
+  public deleteUser = async (input: DeleteUserInputDTO): Promise<DeleteUserOutputDTO>  => {
     
     const { emailToDelete, token } = input
 
@@ -240,7 +244,7 @@ export class UserBusiness {
       userToDeleteDB.created_at
     )
     if (payload.role !== USER_ROLES.ADMIN || emailToDelete !== userToDeleteDB.email) {
-      throw new BadRequestError("somente admins podem acessar esse recurso")
+      throw new BadRequestError("somente admins ou o dono dessa conta podem acessar esse recurso")
     }
     
     await this.userDatabase.deleteUserByEmail(userToDeleteDB.email)
