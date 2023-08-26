@@ -32,7 +32,7 @@ if(!payload){
 }
 
 if(payload?.role !== USER_ROLES.ADMIN){
-  throw new BadRequestError("Só ADMIN pode acessar essa bosta")
+  throw new BadRequestError("Só ADMIN pode acessar")
 }
 
 
