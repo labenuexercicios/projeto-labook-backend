@@ -104,7 +104,7 @@ export class UserBusiness {
 
     return output
   }
-  
+
   public getUsers = async (
     input: GetUsersInputDTO
   ): Promise<GetUsersOutputDTO> => {
@@ -117,7 +117,7 @@ export class UserBusiness {
     }
 
     const usersDB = await this.userDatabase.getUsers()
- 
+
     const users = usersDB.map((userDB) => {
       const user = new User(
         userDB.id,
@@ -133,7 +133,7 @@ export class UserBusiness {
     const output: GetUsersOutputDTO = users
     return output
   }
-  
+
   public getUserByName = async (
     input: GetUsersInputDTO
   ): Promise<GetUsersOutputDTO> => {
@@ -145,8 +145,8 @@ export class UserBusiness {
       throw new UnauthorizedError()
     }
 
-   const usersDB = await this.userDatabase.findUserByName(name)
- 
+    const usersDB = await this.userDatabase.findUserByName(name)
+
     const users = usersDB.map((userDB) => {
       const user = new User(
         userDB.id,
@@ -227,7 +227,7 @@ export class UserBusiness {
 
   }
 
-  
+
   public editUserRoleById = async (
     input: ChangeUserRoleInputDTO
   ): Promise<ChangeUserRoleOutputDTO> => {
@@ -246,10 +246,6 @@ export class UserBusiness {
       throw new UnauthorizedError()
     }
 
-    if (payload.role !== "ADMIN" || payload.id !== idToEdit) {
-      throw new UnauthorizedError("Somente o administrador ou o dono da conta pode executar essa ação.")
-    }
-
     if (!userToEditDB) {
       throw new NotFoundError("'ID' para editar não existe")
     }
@@ -262,6 +258,10 @@ export class UserBusiness {
       userToEditDB.role,
       userToEditDB.created_at
     )
+
+    if (payload.id !== idToEdit) {
+      throw new UnauthorizedError("Somente o administrador ou o dono da conta pode executar essa ação.")
+    }
 
     role && user.setRole(role)
 
@@ -304,10 +304,6 @@ export class UserBusiness {
       throw new NotFoundError("Por favor, insira um id")
     }
 
-    if (payload.role !== USER_ROLES.ADMIN || payload.id !== idToDelete) {
-      throw new BadRequestError("Somente admins ou o dono dessa conta podem acessar esse recurso")
-    }
-    
     if (!userToDeleteDB) {
       throw new NotFoundError("'ID' não existente em nosso banco.")
     }
@@ -321,7 +317,13 @@ export class UserBusiness {
       userToDeleteDB.created_at
     )
 
-    await this.userDatabase.deleteUserById(userToDeleteDB.id)
+    if (payload.role === USER_ROLES.ADMIN) {
+      await this.userDatabase.deleteUserById(userToDeleteDB.id)
+    } else if (userToDeleteDB.id === payload.id) {
+      await this.userDatabase.deleteUserById(userToDeleteDB.id)
+    } else {
+      throw new UnauthorizedError("Somente admins ou o dono dessa conta podem acessar esse recurso")
+    }
 
     const output = {
       message: "Usuário deletado com sucesso",

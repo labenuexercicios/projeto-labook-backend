@@ -80,20 +80,20 @@ export class PostBusiness {
     const postsDB = await this.postDatabase.getPosts()
 
     const posts = postsDB
-    .map((postWithCreator) => {
-      const post = new Post(
-        postWithCreator.id,
-        postWithCreator.content,
-        postWithCreator.likes,
-        postWithCreator.dislikes,
-        postWithCreator.created_at,
-        postWithCreator.updated_at,
-        postWithCreator.creator_id,
-        postWithCreator.creator_name
-      )
-      
-      return post.toBusinessModel()
-    })
+      .map((postWithCreator) => {
+        const post = new Post(
+          postWithCreator.id,
+          postWithCreator.content,
+          postWithCreator.likes,
+          postWithCreator.dislikes,
+          postWithCreator.created_at,
+          postWithCreator.updated_at,
+          postWithCreator.creator_id,
+          postWithCreator.creator_name
+        )
+
+        return post.toBusinessModel()
+      })
 
     const output: GetPostsOutputDTO = posts
     return output
@@ -112,20 +112,20 @@ export class PostBusiness {
       throw new UnauthorizedError()
     }
 
-    const posts = postsDB   
-    .map((postWithCreator) => {
-      const post = new Post(
-        postWithCreator.id,
-        postWithCreator.content,
-        postWithCreator.likes,
-        postWithCreator.dislikes,
-        postWithCreator.created_at,
-        postWithCreator.updated_at,
-        postWithCreator.creator_id,
-        postWithCreator.creator_name
-      )
-      return post.toBusinessModel()
-    })
+    const posts = postsDB
+      .map((postWithCreator) => {
+        const post = new Post(
+          postWithCreator.id,
+          postWithCreator.content,
+          postWithCreator.likes,
+          postWithCreator.dislikes,
+          postWithCreator.created_at,
+          postWithCreator.updated_at,
+          postWithCreator.creator_id,
+          postWithCreator.creator_name
+        )
+        return post.toBusinessModel()
+      })
 
     const output: GetPostsOutputDTO = posts
     return output
@@ -144,20 +144,20 @@ export class PostBusiness {
       throw new UnauthorizedError()
     }
 
-    const posts = postsDB   
-    .map((postWithCreator) => {
-      const post = new Post(
-        postWithCreator.id,
-        postWithCreator.content,
-        postWithCreator.likes,
-        postWithCreator.dislikes,
-        postWithCreator.created_at,
-        postWithCreator.updated_at,
-        postWithCreator.creator_id,
-        postWithCreator.creator_name
-      )
-      return post.toBusinessModel()
-    })
+    const posts = postsDB
+      .map((postWithCreator) => {
+        const post = new Post(
+          postWithCreator.id,
+          postWithCreator.content,
+          postWithCreator.likes,
+          postWithCreator.dislikes,
+          postWithCreator.created_at,
+          postWithCreator.updated_at,
+          postWithCreator.creator_id,
+          postWithCreator.creator_name
+        )
+        return post.toBusinessModel()
+      })
 
     const output: GetPostsOutputDTO = posts
     return output
@@ -176,7 +176,7 @@ export class PostBusiness {
       throw new UnauthorizedError()
     }
 
-    const post = new Post (
+    const post = new Post(
       postDB.id,
       postDB.content,
       postDB.likes,
@@ -185,11 +185,11 @@ export class PostBusiness {
       postDB.updated_at,
       postDB.creator_id,
       postDB.creator_name
-      )
+    )
 
-      return post.toBusinessModel() 
-      
-    }
+    return post.toBusinessModel()
+
+  }
 
   public editPost = async (
     input: EditPostInputDTO
@@ -216,8 +216,8 @@ export class PostBusiness {
     if (!postToEditDB) {
       throw new NotFoundError("Post com suposto id não encontrado, insira um id válido")
     }
-    
-    const post = new Post (
+
+    const post = new Post(
       postToEditDB.id,
       postToEditDB.content,
       postToEditDB.likes,
@@ -226,11 +226,8 @@ export class PostBusiness {
       new Date().toISOString(),
       postToEditDB.creator_id,
       postToEditDB.creator_name
-      )
+    )
 
-      if (payload.role !== USER_ROLES.ADMIN || postToEditDB.creator_id !== payload.id) {
-        throw new UnauthorizedError("Somente administradores ou o criador do post podem acessar esse recurso")
-      }
 
     content && post.setContent(content)
 
@@ -244,7 +241,13 @@ export class PostBusiness {
       updated_at: post.getUpdatedAt()
     }
 
-    await this.postDatabase.updatePostById(idToEdit, updatePostDB)
+    if (payload.role === USER_ROLES.ADMIN) {
+      await this.postDatabase.updatePostById(idToEdit, updatePostDB)
+    } else if (postToEditDB.creator_id === payload.id) {
+      await this.postDatabase.updatePostById(idToEdit, updatePostDB)
+    } else {
+      throw new UnauthorizedError("Somente o administrador ou dono da postagem podem acessar este recurso.")
+    }
 
     const output = {
       content: post.getContent()
@@ -286,11 +289,14 @@ export class PostBusiness {
       postToDeleteDB.creator_name,
     )
 
-    if (payload.role !== USER_ROLES.ADMIN || postToDeleteDB.creator_id !== payload.id) {
-      throw new UnauthorizedError("Somente administradores ou o criador do post podem acessar esse recurso")
+    if (payload.role === USER_ROLES.ADMIN) {
+      await this.postDatabase.deletePostById(idToDelete)
+    } else if (postToDeleteDB.creator_id === payload.id) {
+      await this.postDatabase.deletePostById(idToDelete)
+    } else {
+      throw new UnauthorizedError("Somente o administrador ou dono da postagem podem acessar este recurso.")
     }
 
-    await this.postDatabase.deletePostById(idToDelete)
 
     const output = {
       message: "Postagem deletada com sucesso",
