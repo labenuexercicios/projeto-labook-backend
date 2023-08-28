@@ -304,6 +304,10 @@ export class UserBusiness {
       throw new NotFoundError("Por favor, insira um id")
     }
 
+    if (payload.role !== USER_ROLES.ADMIN || payload.id !== idToDelete) {
+      throw new BadRequestError("Somente admins ou o dono dessa conta podem acessar esse recurso")
+    }
+    
     if (!userToDeleteDB) {
       throw new NotFoundError("'ID' não existente em nosso banco.")
     }
@@ -316,9 +320,6 @@ export class UserBusiness {
       userToDeleteDB.role,
       userToDeleteDB.created_at
     )
-    if (payload.role !== USER_ROLES.ADMIN || idToDelete !== userToDeleteDB.id) {
-      throw new BadRequestError("Somente admins ou o dono dessa conta podem acessar esse recurso")
-    }
 
     await this.userDatabase.deleteUserById(userToDeleteDB.id)
 
