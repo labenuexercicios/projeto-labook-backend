@@ -137,7 +137,9 @@ export class PostController {
     try {
 
       const input = EditPostSchema.parse({
-        content: req.body.content
+        idToEdit: req.params.id,
+        content: req.body.content,
+        token: req.headers.authorization
       })
 
       const output = await this.postBusiness.editPost(input)
