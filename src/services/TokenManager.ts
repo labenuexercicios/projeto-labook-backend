@@ -6,7 +6,7 @@ dotenv.config();
 
 export interface TokenPayload {
   id: string;
-  role: USER_ROLES;
+  role: USER_ROLES; 
   name: string;
 }
 
@@ -16,6 +16,7 @@ export class TokenMananger {
       expiresIn: process.env.JWT_EXPIRES_IN,
     });
     return token;
+    console.log(token)
   }
 
   public getPaylod(token: string): TokenPayload | null {

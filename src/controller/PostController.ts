@@ -42,6 +42,7 @@ export class PostController{
             token: req.headers.authorization, 
             content: req.body.content 
           })
+          console.log(input)
 
           const output = await this.postBusiness.createPost(input)
           return res.status(201).send(output);

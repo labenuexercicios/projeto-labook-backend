@@ -57,27 +57,31 @@ export class PostBusiness {
       };
 
       public createPost = async (input: CreatePostInputDTO): Promise<CreatePostOutputDTO> => {
-          const {token, content } = input 
-          const payload = this.tokenManager.getPaylod(token)
-          if(!payload){
-            throw new UnauthorizedError()
-          }
-          const id = this.idGenerator.generateId()
-          const post = new Post(
-            id,
-            content,
-            0, 
-            0,
-            new Date().toISOString(),
-            new Date().toISOString(),
-            payload.id,
-            payload.name
-          )
-          const postDB = post.toPostDB()
-          await this.postDatabase.insertPost(postDB)
-          const output: CreatePostOutputDTO = undefined
-          return output
-      };
+        const {token, content } = input 
+        const payload = this.tokenManager.getPaylod(token)
+        if(!payload){
+          throw new UnauthorizedError()
+        }
+        const id = this.idGenerator.generateId()
+        const post = new Post(
+          id,
+          content,
+          0, 
+          0,
+          new Date().toISOString(),
+          new Date().toISOString(),
+          payload.id,
+          payload.name
+        )
+        const postDB = post.toPostDB()
+        await this.postDatabase.insertPost(postDB)
+        const output: CreatePostOutputDTO = undefined
+        return output
+        console.log(payload)
+    };
+
+
+     
 
       public editPost = async (input: EditPostInputDTO): Promise<EditPostOutputDTO> => {
           const { idToEdit, token, content } = input;
