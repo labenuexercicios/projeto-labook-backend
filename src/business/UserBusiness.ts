@@ -246,8 +246,8 @@ export class UserBusiness {
       throw new UnauthorizedError()
     }
 
-    if (payload.role !== "ADMIN") {
-      throw new UnauthorizedError("Somente o administrador pode executar essa ação.")
+    if (payload.role !== "ADMIN" || payload.id !== idToEdit) {
+      throw new UnauthorizedError("Somente o administrador ou o dono da conta pode executar essa ação.")
     }
 
     if (!userToEditDB) {
