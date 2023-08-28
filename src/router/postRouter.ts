@@ -17,8 +17,8 @@ const postController = new PostController(
 
 postRouter.get("/", postController.getPosts)
 postRouter.get("/:id", postController.getPostById)
-postRouter.get("/:content", postController.getPostsByContent)
-postRouter.get("/:user", postController.getUserPosts)
+postRouter.get("/content", postController.getPostsByContent)
+postRouter.get("/user", postController.getUserPosts)
 postRouter.post("/", postController.createPost)
 postRouter.put("/:id", postController.editPostById)
 postRouter.put("/:id/like", postController.likeOrDislikePost)

@@ -32,17 +32,20 @@ export class UserBusiness {
     const id = this.idGenerator.generate()
     const hashedPassword = await this.hashManager.hash(password)
     const userDBExists = await this.userDatabase.findUserById(id)
+    const users = await this.userDatabase.getUsers()
 
     if (userDBExists) {
       throw new Error("'ID' já existe")
     }
+
+    const role = users.length === 0 ? USER_ROLES.ADMIN : USER_ROLES.NORMAL
 
     const newUser = new User(
       id,
       name,
       email,
       hashedPassword,
-      USER_ROLES.NORMAL,
+      role,
       new Date().toISOString()
     )
 
