@@ -216,10 +216,6 @@ export class PostBusiness {
     if (!postToEditDB) {
       throw new NotFoundError("Post com suposto id não encontrado, insira um id válido")
     }
-
-    if (payload.id !== idToEdit) {
-      throw new UnauthorizedError("Somente o criador do post pode acessar esse recurso")
-    }
     
     const post = new Post (
       postToEditDB.id,
@@ -232,6 +228,9 @@ export class PostBusiness {
       postToEditDB.creator_name
       )
 
+      if (payload.role !== USER_ROLES.ADMIN || postToEditDB.creator_id !== payload.id) {
+        throw new UnauthorizedError("Somente administradores ou o criador do post podem acessar esse recurso")
+      }
 
     content && post.setContent(content)
 
@@ -276,10 +275,6 @@ export class PostBusiness {
       throw new NotFoundError("'ID' não encontrado")
     }
 
-    if (payload.role !== USER_ROLES.ADMIN || payload.id !== idToDelete) {
-      throw new UnauthorizedError("Somente administradores ou o criador do post podem acessar esse recurso")
-    }
-
     const post = new Post(
       postToDeleteDB.id,
       postToDeleteDB.content,
@@ -290,6 +285,11 @@ export class PostBusiness {
       postToDeleteDB.creator_id,
       postToDeleteDB.creator_name,
     )
+
+    if (payload.role !== USER_ROLES.ADMIN || postToDeleteDB.creator_id !== payload.id) {
+      throw new UnauthorizedError("Somente administradores ou o criador do post podem acessar esse recurso")
+    }
+
     await this.postDatabase.deletePostById(idToDelete)
 
     const output = {
