@@ -9,7 +9,7 @@ CREATE TABLE if NOT EXISTS users(
 );
 CREATE TABLE if NOT EXISTS posts(    
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
-    creator_id TEXT UNIQUE NOT NULL,
+    creator_id TEXT NOT NULL,
     content TEXT NOT NULL,
     likes INTEGER NOT NULL,
     dislikes INTEGER NOT NULL,
@@ -29,10 +29,7 @@ CREATE TABLE if NOT EXISTS likes_dislikes(
     ON DELETE CASCADE   
 );
 
-INSERT into users(id, name, email, password, role, created_at)
-VALUES
-("u001", "Samuel", "samuel@email.com", "samuelsenha", "admin", DATETIME('now')),
-("u002", "Flavia", "flavia@email.com", "flaviasenha", "moderator", DATETIME('now')),
-("u003", "Julia", "julia@email.com", "juliasenha", "student", DATETIME('now')),
-("u004", "Rodrigo", "rodrigo@email.com", "rodrigosenha", "student", DATETIME('now')),
-("u005", "Pedro", "pedro@email.com", "pedrosenha", "student", DATETIME('now'));
+SELECT 
+posts.id, content, likes, dislikes, users.id as creatorId, users.name as creatorName
+FROM posts
+join USERS ON users.id = posts.creator_id

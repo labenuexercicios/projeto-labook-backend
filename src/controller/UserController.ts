@@ -7,6 +7,7 @@ import { SignupSchema } from "../dtos/Users/signup.dto"
 import { LoginSchema } from "../dtos/Users/login.dto"
 import { GetUsersSchema } from "../dtos/Users/getUsers.dto"
 import { DeleteUserSchema } from "../dtos/Users/deleteUser.dto"
+import { ChangeUserRoleSchema } from "../dtos/Users/changeUserRole.dto"
 
 export class UserController {
 
@@ -35,6 +36,29 @@ export class UserController {
         }
     }
 
+    
+    public getUserByName = async (req: Request, res: Response) => {
+      try {
+        const input = GetUsersSchema.parse({
+          name: req.params.name,
+          token: req.headers.authorization
+      })
+
+            const output = await this.userBusiness.getUserByName(input)
+            res.status(200).send(output)
+
+      } catch (error) {
+          console.log(error)
+
+          if (error instanceof ZodError) {
+              res.status(400).send(error.issues)
+          } else if (error instanceof BaseError) {
+              res.status(error.statusCode).send(error.message)
+          } else {
+              res.status(500).send("Erro inesperado")
+          }
+      }
+  }
   
     public signup = async (req: Request, res: Response) => {
 
@@ -84,19 +108,18 @@ export class UserController {
       }
     }
 
-    public editUserByEmail = async (req: Request, res: Response) => {
+    public editUserById = async (req: Request, res: Response) => {
       try {
   
         const input = EditUserSchema.parse({
-          emailToEdit: req.params.email,
-          id: req.body.id,
+          idToEdit: req.params.id,
           name: req.body.name,
           email: req.body.email,
           password: req.body.password,
           token: req.headers.authorization
         })
   
-        const output = await this.userBusiness.editUser(input)
+        const output = await this.userBusiness.editUserById(input)
   
         res.status(200).send(output)
       } catch (error) {
@@ -113,15 +136,15 @@ export class UserController {
     }
 
     
-  public deleteUserByEmail = async (req: Request, res: Response) => {
+  public deleteUserById = async (req: Request, res: Response) => {
     try {
 
       const input = DeleteUserSchema.parse({
-        emailToDelete: req.params.email,
+        idToDelete: req.params.id,
         token: req.headers.authorization
       })
 
-      const output = await this.userBusiness.deleteUser(input)
+      const output = await this.userBusiness.deleteUserById(input)
 
       res.status(200).send(output)
     } catch (error) {
@@ -134,5 +157,29 @@ export class UserController {
       }
     }
   }
+ 
+  public editUserRoleById = async (req: Request, res: Response) => {
+    try {
+  
+      const input = ChangeUserRoleSchema.parse({
+        idToEdit: req.params.id,
+        role: req.body.role,
+        token: req.headers.authorization
+      })
 
+      const output = await this.userBusiness.editUserRoleById(input)
+
+      res.status(200).send(output)
+    } catch (error) {
+      console.log(error)
+
+      if(error instanceof ZodError ){
+        res.status(400).send(error.issues)
+      } else if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message)
+      } else {
+        res.status(500).send("Erro inesperado")
+      }
+    }
+  }
 }

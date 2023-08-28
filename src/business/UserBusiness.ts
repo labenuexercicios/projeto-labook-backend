@@ -2,6 +2,7 @@ import { UserDatabase } from "../database/UserDataBase"
 import { UserDB, User } from "../models/User"
 import { NotFoundError } from "../errors/NotFoundError"
 import { BadRequestError } from "../errors/BadRequestError"
+import { UnauthorizedError } from "../errors/UnauthorizedError"
 import { TokenManager } from "../services/TokenManager"
 import { IdGenerator } from "../services/idGenerator"
 import { HashManager } from "../services/HashManager"
@@ -11,6 +12,7 @@ import { SignupInputDTO, SignupOutputDTO } from "../dtos/Users/signup.dto"
 import { EditUserInputDTO, EditUsertOutputDTO } from "../dtos/Users/editUser.dto"
 import { GetUsersInputDTO, GetUsersOutputDTO } from "../dtos/Users/getUsers.dto"
 import { DeleteUserInputDTO, DeleteUserOutputDTO } from "../dtos/Users/deleteUser.dto"
+import { ChangeUserRoleInputDTO, ChangeUserRoleOutputDTO } from '../dtos/Users/changeUserRole.dto'
 
 
 export class UserBusiness {
@@ -28,13 +30,11 @@ export class UserBusiness {
     const { name, email, password } = input
 
     const id = this.idGenerator.generate()
-
     const hashedPassword = await this.hashManager.hash(password)
-
-    const userDBExists = await this.userDatabase.findUsers(id)
+    const userDBExists = await this.userDatabase.findUserById(id)
 
     if (userDBExists) {
-      throw new Error("'id' já existe")
+      throw new Error("'ID' já existe")
     }
 
     const newUser = new User(
@@ -64,30 +64,29 @@ export class UserBusiness {
     })
 
     const output = {
-      message: "Cadastro realizado com sucesso",
-      user: newUser,
-      token
+      token: token
     }
 
     return output
   }
 
 
-  public login = async (input: LoginInputDTO): Promise<LoginOutputDTO> => {
-    
+  public login = async (
+    input: LoginInputDTO
+  ): Promise<LoginOutputDTO> => {
+
     const { email, password } = input
 
     const userDB = await this.userDatabase.findUserByEmail(email)
-
     if (!userDB) {
-      throw new NotFoundError("'email' não encontrado")
+      throw new NotFoundError("'Email' não encontrado")
     }
 
     const hashedPassword = userDB.password
     const isPasswordCorrect = await this.hashManager.compare(password, hashedPassword)
 
     if (!isPasswordCorrect) {
-      throw new BadRequestError("'email' ou 'password' incorretos")
+      throw new BadRequestError("'Email' ou 'password' não conferem, tente novamente")
     }
 
     const token = this.tokenManager.createToken({
@@ -97,14 +96,12 @@ export class UserBusiness {
     })
 
     const output: LoginOutputDTO = {
-      message: "Login realizado com sucesso",
       token: token
     }
 
     return output
   }
-
-
+  
   public getUsers = async (
     input: GetUsersInputDTO
   ): Promise<GetUsersOutputDTO> => {
@@ -112,22 +109,41 @@ export class UserBusiness {
     const { name, token } = input
     const payload = this.tokenManager.getPayload(token)
 
-    if (payload === null) {
-      throw new BadRequestError("token inválido")
+    if (!payload || payload === null) {
+      throw new UnauthorizedError()
     }
 
-    if (payload.role !== USER_ROLES.ADMIN) {
-      throw new BadRequestError("somente admins podem acessar esse recurso")
+    const usersDB = await this.userDatabase.getUsers()
+ 
+    const users = usersDB.map((userDB) => {
+      const user = new User(
+        userDB.id,
+        userDB.name,
+        userDB.email,
+        userDB.password,
+        userDB.role,
+        userDB.created_at
+      )
+      return user.toBusinessModel()
+    })
+
+    const output: GetUsersOutputDTO = users
+    return output
+  }
+  
+  public getUserByName = async (
+    input: GetUsersInputDTO
+  ): Promise<GetUsersOutputDTO> => {
+
+    const { name, token } = input
+    const payload = this.tokenManager.getPayload(token)
+
+    if (!payload || payload === null) {
+      throw new UnauthorizedError()
     }
 
-    let usersDB;
-
-    if (name) {
-      usersDB = await this.userDatabase.findUsers(name)
-    } else {
-      usersDB = await this.userDatabase.findUsers()
-    }
-
+   const usersDB = await this.userDatabase.findUserByName(name)
+ 
     const users = usersDB.map((userDB) => {
       const user = new User(
         userDB.id,
@@ -144,30 +160,28 @@ export class UserBusiness {
     return output
   }
 
-  public editUser = async (input: EditUserInputDTO): Promise<EditUsertOutputDTO> => {
+  public editUserById = async (
+    input: EditUserInputDTO
+  ): Promise<EditUsertOutputDTO> => {
 
     const {
-      emailToEdit,
+      idToEdit,
       name,
       email,
       password,
       token
     } = input
 
-    const userToEditDB = await this.userDatabase.findUserByEmail(emailToEdit)
+    const userToEditDB = await this.userDatabase.findUserById(idToEdit)
 
     const payload = this.tokenManager.getPayload(token)
 
-    if (payload === null) {
-      throw new BadRequestError("token inválido")
-    }
-
-    if (!payload.role.includes(USER_ROLES.ADMIN) || !payload.role.includes(USER_ROLES.NORMAL)) {
-      throw new BadRequestError("somente usuários logados podem acessar esse recurso")
+    if (!payload || payload === null) {
+      throw new UnauthorizedError()
     }
 
     if (!userToEditDB) {
-      throw new NotFoundError("'id' para editar não existe")
+      throw new NotFoundError("'ID' para editar não existe")
     }
 
     const user = new User(
@@ -176,11 +190,11 @@ export class UserBusiness {
       userToEditDB.email,
       userToEditDB.password,
       userToEditDB.role,
-      userToEditDB.created_at,
+      userToEditDB.created_at
     )
 
-    if (userToEditDB.email !== emailToEdit) {
-      throw new BadRequestError("somente o email dono desta conta pode editar os dados.")
+    if (userToEditDB.id !== idToEdit) {
+      throw new UnauthorizedError("Somente o dono desta conta pode editar os dados da mesma.")
     }
 
     email && user.setEmail(email)
@@ -196,43 +210,99 @@ export class UserBusiness {
       created_at: user.getCreatedAt()
     }
 
-    await this.userDatabase.updateUserByEmail(emailToEdit, updatedUserDB)
+    await this.userDatabase.updateUserById(idToEdit, updatedUserDB)
 
     const output = {
       message: "Usuário editado com sucesso",
-      user: {
-        id: user.getId(),
-        name: user.getName(),
-        email: user.getEmail(),
-        password: user.getPassword(),
-        role: user.getRole(),
-        createdAt: user.getCreatedAt(),
-        token: token
-      }
+      name: user.getName(),
+      email: user.getEmail(),
+      password: user.getPassword(),
+      role: user.getRole(),
     }
 
     return output
 
   }
 
-  public deleteUser = async (input: DeleteUserInputDTO): Promise<DeleteUserOutputDTO>  => {
-    
-    const { emailToDelete, token } = input
+  
+  public editUserRoleById = async (
+    input: ChangeUserRoleInputDTO
+  ): Promise<ChangeUserRoleOutputDTO> => {
 
-    const userToDeleteDB = await this.userDatabase.findUserByEmail(emailToDelete)
+    const {
+      idToEdit,
+      role,
+      token
+    } = input
+
+    const userToEditDB = await this.userDatabase.findUserById(idToEdit)
 
     const payload = this.tokenManager.getPayload(token)
 
-    if (payload === null) {
-      throw new BadRequestError("token inválido")
+    if (!payload || payload === null) {
+      throw new UnauthorizedError()
     }
 
-    if (!emailToDelete) {
-      throw new NotFoundError("por favor, insira um email")
+    if (payload.role !== "ADMIN") {
+      throw new UnauthorizedError("Somente o administrador pode executar essa ação.")
+    }
+
+    if (!userToEditDB) {
+      throw new NotFoundError("'ID' para editar não existe")
+    }
+
+    const user = new User(
+      userToEditDB.id,
+      userToEditDB.name,
+      userToEditDB.email,
+      userToEditDB.password,
+      userToEditDB.role,
+      userToEditDB.created_at
+    )
+
+    role && user.setRole(role)
+
+    const updatedUserDB: UserDB = {
+      id: user.getId(),
+      name: user.getName(),
+      email: user.getEmail(),
+      password: user.getPassword(),
+      role: user.getRole(),
+      created_at: user.getCreatedAt()
+    }
+
+    await this.userDatabase.updateUserRoleById(idToEdit, updatedUserDB)
+
+    const output = {
+      id: user.getId(),
+      name: user.getName(),
+      role: user.getRole(),
+    }
+
+    return output
+
+  }
+
+  public deleteUserById = async (
+    input: DeleteUserInputDTO
+  ): Promise<DeleteUserOutputDTO> => {
+
+    const { idToDelete, token } = input
+
+    const userToDeleteDB = await this.userDatabase.findUserById(idToDelete)
+
+    const payload = this.tokenManager.getPayload(token)
+
+    if (!payload || payload === null) {
+      throw new UnauthorizedError()
+    }
+
+    if (!idToDelete) {
+      throw new NotFoundError("Por favor, insira um id")
     }
 
     if (!userToDeleteDB) {
-      throw new NotFoundError("'email' para deletar não existe")
+      throw new NotFoundError("'ID' não existente em nosso banco.")
     }
 
     const user = new User(
@@ -243,23 +313,16 @@ export class UserBusiness {
       userToDeleteDB.role,
       userToDeleteDB.created_at
     )
-    if (payload.role !== USER_ROLES.ADMIN || emailToDelete !== userToDeleteDB.email) {
-      throw new BadRequestError("somente admins ou o dono dessa conta podem acessar esse recurso")
+    if (payload.role !== USER_ROLES.ADMIN || idToDelete !== userToDeleteDB.id) {
+      throw new BadRequestError("Somente admins ou o dono dessa conta podem acessar esse recurso")
     }
-    
-    await this.userDatabase.deleteUserByEmail(userToDeleteDB.email)
+
+    await this.userDatabase.deleteUserById(userToDeleteDB.id)
 
     const output = {
       message: "Usuário deletado com sucesso",
-      user: {
-        id: user.getId(),
-        name: user.getName(),
-        email: user.getEmail(),
-        password: user.getPassword(),
-        role: user.getRole(),
-        createdAt: user.getCreatedAt()
-      }
     }
     return output
   }
+
 }

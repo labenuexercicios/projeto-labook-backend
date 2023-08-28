@@ -18,7 +18,9 @@ const userController = new UserController(
     )
 
 userRouter.get("/", userController.getUsers)
+userRouter.get("/:name", userController.getUserByName)
 userRouter.post("/signup", userController.signup)
 userRouter.post("/login", userController.login)
-userRouter.put("/:email", userController.editUserByEmail)
-userRouter.delete("/:email", userController.deleteUserByEmail)
+userRouter.put("/:id", userController.editUserById)
+userRouter.put("/role/:id", userController.editUserRoleById)
+userRouter.delete("/:id", userController.deleteUserById)

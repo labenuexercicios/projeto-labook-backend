@@ -1,16 +1,21 @@
-export interface LikeDB {
+export interface LikeOrDislikeDB {
     user_id: string,
     post_id: string,
     like: number
 }
 
-export interface LikeModel {
+export interface LikeOrDislikeModel {
     user_id: string,
     post_id: string,
     like: number
 }
 
-export class Like {
+export enum POST_LIKE{
+    ALREADY_LIKED = "ALREADY LIKED",
+    ALREADY_DISLIKED = "ALREADY DISLIKED"
+}
+
+export class LikeOrDislike {
     constructor(
         private userId: string,
         private postId: string,
@@ -41,7 +46,7 @@ export class Like {
         this.like = value
     }
 
-    public toDBModel(): LikeDB {
+    public toDBModel(): LikeOrDislikeDB {
         return {
             user_id: this.userId,
             post_id: this.postId,
@@ -49,7 +54,7 @@ export class Like {
         }
     }
 
-    public toBusinessModel(): LikeModel {
+    public toBusinessModel(): LikeOrDislikeModel {
         return {
             user_id: this.userId,
             post_id: this.postId,

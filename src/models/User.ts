@@ -1,5 +1,6 @@
 export enum USER_ROLES {
     NORMAL = "NORMAL",
+    MODERATOR = "MODERATOR",
     ADMIN = "ADMIN"
 }
 
@@ -16,6 +17,7 @@ export interface UserModel {
     id: string,
     name: string,
     email: string,
+    password: string,
     role: USER_ROLES,
     createdAt: string
 }
@@ -95,6 +97,7 @@ export class User {
             id: this.id,
             name: this.name,
             email: this.email,
+            password: this.password,
             role: this.role,
             createdAt: this.createdAt
         }

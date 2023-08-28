@@ -6,7 +6,6 @@ export interface LoginInputDTO {
 }
 
 export interface LoginOutputDTO {
-  message: string,
   token: string
 }
 
