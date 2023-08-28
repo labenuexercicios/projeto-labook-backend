@@ -22,8 +22,12 @@ Agora que temos as bases de criação de APIs e banco de dados, o próximo níve
 
 https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
+
+
+
+
 # Lista de requisitos
-- Documentação Postman de todos os endpoints (obrigatória para correção)
+
 
 - Endpoints
     - [ ]  signup
@@ -46,21 +50,57 @@ https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
 - README.md
 
-# Token payload e User roles
-O enum de roles e o payload do token JWT devem estar no seguinte formato:
-```typescript
-export enum USER_ROLES {
-    NORMAL = "NORMAL",
-    ADMIN = "ADMIN"
-}
 
-export interface TokenPayload {
-    id: string,
-    name: string,
-    role: USER_ROLES
-}
-```
 
+# Execução
+1. Clone do repositório
+  ```sh
+  git clone https://github.com/garrcastro/projeto-labook-backend.git
+  ```
+
+2. Entre na pasta do clone  
+```sh
+  cd projeto-labook-backend
+  ```
+
+3. Abra o projeto na sua IDE
+```sh
+  code .
+  ```
+
+4. Instale as dependências através do terminal
+```sh
+  npm i
+  ```
+5. Crie a tabela 'users', 'posts' e 'likes_dislikes', acessando o arquivo 'labook.db' na pasta database e clicando em 'Execute', acima de "CREATE TABLE users", "CREATE TABLE posts" E "CREATE TABLE likes_dislikes"
+
+6. Execute a API através do terminal
+```sh
+  npm run dev
+  ```
+
+# Documentação da API
+[Labook](https://documenter.getpostman.com/view/26586063/2s9Y5YT3Cq)
+
+## Métodos
+Requisições para a API devem seguir os padrões:
+| Método | Descrição |
+|---|---|
+| `GET` | Retorna informações de um ou mais registros. |
+| `POST` | Utilizado para criar um novo registro ou acesso a Login. |
+| `PUT` | Atualiza dados de um registro ou altera sua situação. |
+| `DELETE` | Remove um registro do sistema. |
+
+
+## Respostas
+
+| Código | Descrição |
+|---|---|
+| `200` | Requisição executada com sucesso (success).|
+| `201` | Dados creado com sucesso(sucess).|
+| `400` | Erros de validação ou os campos informados não existem no sistema.|
+| `404` | Registro pesquisado não encontrado (Not found).|
+| `500` | Erro inesperado.|
 # Exemplos de requisição
 
 ## Signup
@@ -224,3 +264,7 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 - caso não exista um registro na tabela de relação, é porque a pessoa não deu like nem dislike
 - caso dê like em um post que já tenha dado like, o like é removido (deleta o item da tabela)
 - caso dê dislike em um post que já tenha dado dislike, o dislike é removido (deleta o item da tabela)
+
+## Autor
+
+Gabriel Castro 
