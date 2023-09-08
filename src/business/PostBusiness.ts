@@ -277,18 +277,7 @@ export class PostBusiness {
     if (!postToDeleteDB) {
       throw new NotFoundError("'ID' não encontrado")
     }
-
-    const post = new Post(
-      postToDeleteDB.id,
-      postToDeleteDB.content,
-      postToDeleteDB.likes,
-      postToDeleteDB.dislikes,
-      postToDeleteDB.created_at,
-      postToDeleteDB.updated_at,
-      postToDeleteDB.creator_id,
-      postToDeleteDB.creator_name,
-    )
-
+    
     if (payload.role === USER_ROLES.ADMIN) {
       await this.postDatabase.deletePostById(idToDelete)
     } else if (postToDeleteDB.creator_id === payload.id) {
