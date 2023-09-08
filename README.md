@@ -1,4 +1,4 @@
-# Labecommerce API
+# Labook API
 
 O Labook é uma rede social com o objetivo de promover a conexão e interação entre pessoas. Quem se cadastrar no aplicativo poderá criar e curtir publicações. Esta API é parte do projeto final do módulo de back-end do curso de Desenvolvimento Web FullStack da escola de programação "Labenu". Com exceção dos endpoints de login e signup, todos os demais endpoints são protegidos por um token, que expira em até sete dias.
 
