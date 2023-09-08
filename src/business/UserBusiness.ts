@@ -308,15 +308,6 @@ export class UserBusiness {
       throw new NotFoundError("'ID' não existente em nosso banco.")
     }
 
-    const user = new User(
-      userToDeleteDB.id,
-      userToDeleteDB.name,
-      userToDeleteDB.email,
-      userToDeleteDB.password,
-      userToDeleteDB.role,
-      userToDeleteDB.created_at
-    )
-
     if (payload.role === USER_ROLES.ADMIN) {
       await this.userDatabase.deleteUserById(userToDeleteDB.id)
     } else if (userToDeleteDB.id === payload.id) {
