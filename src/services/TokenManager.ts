@@ -1,6 +1,7 @@
 import { USER_ROLES } from "../models/User";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { sign } from "crypto";
 
 dotenv.config();
 
@@ -10,14 +11,23 @@ export interface TokenPayload {
   name: string;
 }
 
-export class TokenMananger {
+ export class TokenMananger {
   public createToken(payload: TokenPayload): string {
+    
+    console.log(sign);
     const token = jwt.sign(payload, process.env.JWT_KEY as string, {
-      expiresIn: process.env.JWT_EXPIRES_IN,
+      expiresIn: process.env.JWT_EXPIRES_IN
+      
+      
+      
     });
+    
+    
     return token;
-    console.log(token)
-  }
+    
+    
+  } 
+  
 
   public getPaylod(token: string): TokenPayload | null {
     try {

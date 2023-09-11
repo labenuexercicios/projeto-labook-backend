@@ -59,9 +59,12 @@ export class PostBusiness {
       public createPost = async (input: CreatePostInputDTO): Promise<CreatePostOutputDTO> => {
         const {token, content } = input 
         const payload = this.tokenManager.getPaylod(token)
+        console.log(payload)
         if(!payload){
           throw new UnauthorizedError()
+          
         }
+        
         const id = this.idGenerator.generateId()
         const post = new Post(
           id,
@@ -77,7 +80,7 @@ export class PostBusiness {
         await this.postDatabase.insertPost(postDB)
         const output: CreatePostOutputDTO = undefined
         return output
-        console.log(payload)
+        
     };
 
 
