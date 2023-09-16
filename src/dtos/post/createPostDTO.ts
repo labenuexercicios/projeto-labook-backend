@@ -29,6 +29,7 @@ export const CreatePostSchema = z.object({
         required_error: "'email' é obrigatório.",
         invalid_type_error: "'email' deve ser do tipo string."
     }),
+    token: z.string()
    
     
 }).transform(data => data as CreatePostInputDTO)
