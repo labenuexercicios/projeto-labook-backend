@@ -120,7 +120,6 @@ Endpoint protegido, requer um token jwt para acessá-lo. A senha retornada estar
         "id": "uma uuid v4",
         "name": "Beltrano",
         "email": "beltrano@email.com",
-        "password": "$2a$12$4A7AzqjrFIXXW38/4WRgGe8t/U5GY5Ur0URw3inScc4QRqfJTUFXy",
         "role": "ADMIN",
         "createdAt": "2023-08-26T06:32:32.991Z"
     },
@@ -128,7 +127,6 @@ Endpoint protegido, requer um token jwt para acessá-lo. A senha retornada estar
         "id": "uma uuid v4",
         "name": "Siclana",
         "email": "siclana@email.com",
-        "password": "$2a$12$rfxmh.wktAdcTGaGdeN07emXs2G.Fkbp/zRmbwLEUpB2dcvjmVPpG",
         "role": "NORMAL",
         "createdAt": "2023-08-26T06:32:32.991Z"
     },
@@ -136,7 +134,6 @@ Endpoint protegido, requer um token jwt para acessá-lo. A senha retornada estar
         "id": "uma uuid v4",
         "name": "Fulana",
         "email": "fulana@email.com",
-        "password": "$2a$12$4izd0WTd4SKcN.L80lQdEu2lfbLTEday7kLWueXoGBp0PS9yHeG7O",
         "role": "NORMAL",
         "createdAt": "2023-08-26T06:32:32.991Z"
     }
@@ -157,7 +154,6 @@ Endpoint protegido, requer um token jwt para acessá-lo. Retorna o usuário de a
         "id": "uma uuid v4",
         "name": "Beltrano",
         "email": "beltrano@email.com",
-        "password": "$2a$12$4A7AzqjrFIXXW38/4WRgGe8t/U5GY5Ur0URw3inScc4QRqfJTUFXy",
         "role": "ADMIN",
         "createdAt": "2023-08-26T06:32:32.991Z"
     },
@@ -165,7 +161,6 @@ Endpoint protegido, requer um token jwt para acessá-lo. Retorna o usuário de a
         "id": "uma uuid v4",
         "name": "Beltrano Silva",
         "email": "beltranosilva@email.com",
-        "password": "$2a$12$rfxmh.wktAdcTGaGdeN07emXs2G.Fkbp/zRmbwLEUpB2dcvjmVPpG",
         "role": "NORMAL",
         "createdAt": "2023-08-26T06:32:32.991Z"
     }
@@ -188,12 +183,7 @@ Endpoint protegido, requer um token jwt para acessá-lo. Apenas o dono da conta 
 // response
 // status 200 OK
     {
-        "message: "Usuário editado com sucesso",
-        "id": "o mesmo id",
-        "name": "Beltrano OU novo nome",
-        "email": "beltrano@email.com OU novo email",
-        "password": "$2a$12$4A7AzqjrFIXXW38/4WRgGe8t/U5GY5Ur0URw3inScc4QRqfJTUFXy OU novo password",
-        "role": "A mesma role"
+        "message: "Usuário editado com sucesso"
     }
 ```
 
