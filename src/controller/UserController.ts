@@ -88,7 +88,7 @@ export class UserController {
       try {
   
         const input = EditUserSchema.parse({
-          idToEdit: req.params.id,
+          idToEdit: req.query.id,
           name: req.body.name,
           email: req.body.email,
           password: req.body.password,
@@ -116,7 +116,7 @@ export class UserController {
     try {
 
       const input = DeleteUserSchema.parse({
-        idToDelete: req.params.id,
+        idToDelete: req.query.id,
         token: req.headers.authorization
       })
 
@@ -138,7 +138,7 @@ export class UserController {
     try {
   
       const input = ChangeUserRoleSchema.parse({
-        idToEdit: req.params.id,
+        idToEdit: req.query.id,
         role: req.body.role,
         token: req.headers.authorization
       })
