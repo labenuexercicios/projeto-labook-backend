@@ -108,11 +108,15 @@ Endpoint público utilizado para login. Devolve um token jwt.
 
 
 ## Get users
-Endpoint protegido, requer um token jwt para acessá-lo. A senha retornada estará hasheada.
+Endpoint protegido, requer um token jwt para acessá-lo.
 ```typescript
 // request GET /users
-// query params = "id" (optional)
 // headers.authorization = "token jwt"
+
+// body JSON
+{
+  "name": "Nome do usuário (opcional)"
+}
 
 // response
 // status 200 OK
@@ -213,8 +217,11 @@ Endpoint protegido, requer um token jwt para acessá-lo.
 Endpoint protegido, requer um token jwt para acessá-lo. O usuário pode inserir um trecho da postagem que ele deseja procurar, sendo algo opcional.
 ```typescript
 // request GET /posts
-// query params = "content" (optional)
 // headers.authorization = "token jwt"
+// body JSON
+{
+  "content": "Conteúdo da postagem (opcional)"
+}
 
 // response
 // status 200 OK
