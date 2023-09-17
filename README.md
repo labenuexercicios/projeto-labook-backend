@@ -68,7 +68,7 @@ As relações entre as tabelas, tal como a tipagem de suas colunas foram elabora
 
 # Lista de endpoints
 
-<img src="https://i.ibb.co/hWYnTdg/image.png" alt="endpoints"></img>
+<img src="https://i.ibb.co/RSyGsSQ/image.png" alt="endpoints"></img>
 
 
 ## Signup
