@@ -17,12 +17,11 @@ export class PostDatabase extends BaseDatabase {
       .insert(newPostDB)
   }
 
-  public getPosts = async (q: string | undefined): Promise<PostDBWithCreator[]> => {
+  public getPosts = async (content: string | undefined): Promise<PostDBWithCreator[]> => {
 
-    
     let PostsDB;
 
-    if (q) {
+    if (content) {
       const result: Array<PostDBWithCreator> = await BaseDatabase
         .connection(PostDatabase.TABLE_POSTS)
         .select(
@@ -40,7 +39,7 @@ export class PostDatabase extends BaseDatabase {
           `${PostDatabase.TABLE_POSTS}.creator_id`,
           "=",
           `${UserDatabase.TABLE_USERS}.id`
-        ).where(`${PostDatabase.TABLE_POSTS}.content`, "LIKE", `%${q}%`)
+        ).where(`${PostDatabase.TABLE_POSTS}.content`, "LIKE", `%${content}%`)
 
         PostsDB = result
       } else {
