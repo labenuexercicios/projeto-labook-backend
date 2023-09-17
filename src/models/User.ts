@@ -95,7 +95,6 @@ export class User {
             id: this.id,
             name: this.name,
             email: this.email,
-            password: this.password,
             role: this.role,
             createdAt: this.createdAt
         }
