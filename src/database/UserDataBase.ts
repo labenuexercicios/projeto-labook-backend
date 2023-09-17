@@ -12,26 +12,24 @@ export class UserDatabase extends BaseDatabase {
   }
 
   
-  public getUsers = async () => {
-
+  public getUsers = async (
+    q: string | undefined
+  ): Promise<UserDB[]> => {
+    
+let usersDB
+    
+    if (q) {
       const result: UserDB[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
-        .select()
-
-      return result
-
-  }
-
-  public findUserByName = async (name: string | undefined) => {
-
-      const userDB: UserDB[] = await BaseDatabase
+        .where("name", "LIKE", `%${q}%`)
+      usersDB = result
+    } else {
+      const result: UserDB[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
-        .select()
-        .where("name", "LIKE", `%${name}%`)
-
-      return userDB
+      usersDB = result
+    }
+    return usersDB
   }
-  
 
   public findUserById = async (id: string) => {
     const [userDB]: UserDB[] | undefined[] = await BaseDatabase
