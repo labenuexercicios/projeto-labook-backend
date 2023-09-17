@@ -111,6 +111,7 @@ Endpoint público utilizado para login. Devolve um token jwt.
 Endpoint protegido, requer um token jwt para acessá-lo. A senha retornada estará hasheada.
 ```typescript
 // request GET /users
+// query params = "id" (optional)
 // headers.authorization = "token jwt"
 
 // response
@@ -140,38 +141,11 @@ Endpoint protegido, requer um token jwt para acessá-lo. A senha retornada estar
 ]
 ```
 
-
-## Get user by name
-Endpoint protegido, requer um token jwt para acessá-lo. Retorna o usuário de acordo com o nome informado, a senha retornada estará hasheada.
-```typescript
-// request GET /users
-// headers.authorization = "token jwt"
-
-// response
-// status 200 OK
-[
-    {
-        "id": "uma uuid v4",
-        "name": "Beltrano",
-        "email": "beltrano@email.com",
-        "role": "ADMIN",
-        "createdAt": "2023-08-26T06:32:32.991Z"
-    },
-    {
-        "id": "uma uuid v4",
-        "name": "Beltrano Silva",
-        "email": "beltranosilva@email.com",
-        "role": "NORMAL",
-        "createdAt": "2023-08-26T06:32:32.991Z"
-    }
-]
-```
-
-
 ## Edit user by id
 Endpoint protegido, requer um token jwt para acessá-lo. Apenas o dono da conta poderá acessar este endpoint. Todos os elementos do body são opcionais.
 ```typescript
-// request PUT /users/:id
+// request PUT /users/?id
+// query params = "id"
 // headers.authorization = "token jwt"
 // body JSON
 {
@@ -190,7 +164,8 @@ Endpoint protegido, requer um token jwt para acessá-lo. Apenas o dono da conta 
 ## Edit user role by id
 Endpoint protegido, requer um token jwt para acessá-lo. Apenas um administrador pode acessar este endpoint, pois ele realiza a troca de role/função de uma conta.
 ```typescript
-// request PUT /users/role/:id
+// request PUT /users/role/?id
+// query params = "id"
 // headers.authorization = "token jwt"
 // body JSON
 {
@@ -209,7 +184,8 @@ Endpoint protegido, requer um token jwt para acessá-lo. Apenas um administrador
 ## Delete user by id
 Endpoint protegido, requer um token jwt para acessá-lo. Apenas um administrador ou o dono da conta poderá acessar este endpoint.
 ```typescript
-// request DELETE /users/:id
+// request DELETE /users/?id
+// query params = "id"
 // headers.authorization = "token jwt"
 
 // response
@@ -234,9 +210,10 @@ Endpoint protegido, requer um token jwt para acessá-lo.
 ```
 
 ## Get posts
-Endpoint protegido, requer um token jwt para acessá-lo.
+Endpoint protegido, requer um token jwt para acessá-lo. O usuário pode inserir um trecho da postagem que ele deseja procurar, sendo algo opcional.
 ```typescript
 // request GET /posts
+// query params = "content" (optional)
 // headers.authorization = "token jwt"
 
 // response
@@ -269,36 +246,11 @@ Endpoint protegido, requer um token jwt para acessá-lo.
 ]
 ```
 
-## Get posts by content
-Endpoint protegido, requer um token jwt para acessá-lo. Retorna todas as postagens que possuam o conteúdo informado no body.
-```typescript
-// request GET /posts/content
-// headers.authorization = "token jwt"
-// body JSON
-{
-    "content": "estudar"
-}
-
-// response
-// status 200 OK
-    {
-        "id": "uma uuid v4",
-        "content": "Hoje vou estudar POO!",
-        "likes": 2,
-        "dislikes" 1,
-        "createdAt": "2023-01-20T12:11:47:000Z"
-        "updatedAt": "2023-01-20T12:11:47:000Z"
-        "creator": {
-            "id": "uma uuid v4",
-            "name": "Fulano"
-        }
-    }
-```
-
 ## Get post by id
 Endpoint protegido, requer um token jwt para acessá-lo. 
 ```typescript
-// request GET /posts/:id
+// request GET /posts/?id
+// query params = "id"
 // headers.authorization = "token jwt"
 // response
 // status 200 OK
@@ -315,34 +267,12 @@ Endpoint protegido, requer um token jwt para acessá-lo.
         }
     }
 ```
-
-## Get user's posts by id
-Endpoint protegido, requer um token jwt para acessá-lo. Retorna todas as postagens feitas por determinado usuário. O id a ser informado aqui é o do usuário, não da postagem.
-```typescript
-// request GET /posts/:id
-// path params = :creatorId
-// headers.authorization = "token jwt"
-// response
-// status 200 OK
-     {
-        "id": "uma uuid v4",
-        "content": "kkkkkkkkkrying",
-        "likes": 0,
-        "dislikes" 0,
-        "createdAt": "2023-01-20T15:41:12:000Z"
-        "updatedAt": "2023-01-20T15:49:55:000Z"
-        "creator": {
-            "id": "id informado no path params",
-            "name": "Ciclana"
-        }
-    }
-```
-
 
 ## Edit post
 Endpoint protegido, requer um token jwt para acessá-lo. Somente quem criou o post pode editá-lo e somente o conteúdo pode ser editado.
 ```typescript
-// request PUT /posts/:id
+// request PUT /posts/?id
+// path params = "id"
 // headers.authorization = "token jwt"
 // body JSON
 {
@@ -365,6 +295,7 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 ### Like (funcionalidade 1)
 ```typescript
 // request PUT /posts/:id/like
+// path params = "id"
 // headers.authorization = "token jwt"
 // body JSON
 {
@@ -378,6 +309,7 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 ### Dislike (funcionalidade 2)
 ```typescript
 // request PUT /posts/:id/like
+// path params = "id"
 // headers.authorization = "token jwt"
 // body JSON
 {
@@ -392,7 +324,8 @@ Caso dê um dislike em um post que tenha dado like, o dislike sobrescreve o like
 Endpoint protegido, requer um token jwt para acessá-lo. Somente um administrador ou o criador do post pode acessar este endpoint.
 
 ```typescript
-// request DELETE /posts/:id
+// request DELETE /posts/?id
+// query params = "id"
 // headers.authorization = "token jwt"
 
 // response
