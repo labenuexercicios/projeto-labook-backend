@@ -109,43 +109,14 @@ export class UserBusiness {
     input: GetUsersInputDTO
   ): Promise<GetUsersOutputDTO> => {
 
-    const { name, token } = input
+    const { q, token } = input
     const payload = this.tokenManager.getPayload(token)
 
     if (!payload || payload === null) {
       throw new UnauthorizedError()
     }
 
-    const usersDB = await this.userDatabase.getUsers()
-
-    const users = usersDB.map((userDB) => {
-      const user = new User(
-        userDB.id,
-        userDB.name,
-        userDB.email,
-        userDB.password,
-        userDB.role,
-        userDB.created_at
-      )
-      return user.toBusinessModel()
-    })
-
-    const output: GetUsersOutputDTO = users
-    return output
-  }
-
-  public getUserByName = async (
-    input: GetUsersInputDTO
-  ): Promise<GetUsersOutputDTO> => {
-
-    const { name, token } = input
-    const payload = this.tokenManager.getPayload(token)
-
-    if (!payload || payload === null) {
-      throw new UnauthorizedError()
-    }
-
-    const usersDB = await this.userDatabase.findUserByName(name)
+    const usersDB = await this.userDatabase.getUsers(q)
 
     const users = usersDB.map((userDB) => {
       const user = new User(
