@@ -109,7 +109,7 @@ export class UserBusiness {
     input: GetUsersInputDTO
   ): Promise<GetUsersOutputDTO> => {
 
-    const { q, token } = input
+    const { name, token } = input
     const payload = this.tokenManager.getPayload(token)
 
     if (!payload || payload === null) {
