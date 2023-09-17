@@ -17,7 +17,7 @@ export class PostController {
 
     try {
           const input = GetPostsSchema.parse({
-            q: req.query.content,
+            content: req.body.content,
             token: req.headers.authorization
         })
 
