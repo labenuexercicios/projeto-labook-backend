@@ -16,7 +16,7 @@ export class UserController {
     public getUsers = async (req: Request, res: Response) => {
         try {
           const input = GetUsersSchema.parse({
-            q: req.query.name,
+            name: req.body.name,
             token: req.headers.authorization
         })
 
