@@ -2,7 +2,7 @@ import z from "zod"
 import { PostModel } from "../../models/Post"
 
 export interface GetPostsInputDTO {
-  q?: string,
+  content?: string,
   token: string 
 }
 
@@ -12,7 +12,7 @@ export interface GetPostByIdInputDTO {
 }
 
 export const GetPostsSchema = z.object({
-  q: z.string().min(1).optional(),
+  content: z.string().min(1).optional(),
   token: z.string().min(1)
 }).transform(data => data as GetPostsInputDTO)
 
