@@ -137,7 +137,7 @@ export class PostController {
   public likeOrDislikePost = async (req: Request, res: Response) => {
     try {
       const input = LikeOrDislikePostSchema.parse({
-        postId: req.query.id,
+        postId: req.params.id,
         like: req.body.like,
         token: req.headers.authorization
       })
