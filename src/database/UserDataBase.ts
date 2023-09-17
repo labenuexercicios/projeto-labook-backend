@@ -13,7 +13,7 @@ export class UserDatabase extends BaseDatabase {
 
   
   public getUsers = async (
-    q: string | undefined
+    name: string | undefined
   ): Promise<UserDB[]> => {
     
 let usersDB
@@ -21,7 +21,7 @@ let usersDB
     if (q) {
       const result: UserDB[] = await BaseDatabase
         .connection(UserDatabase.TABLE_USERS)
-        .where("name", "LIKE", `%${q}%`)
+        .where("name", "LIKE", `%${name}%`)
       usersDB = result
     } else {
       const result: UserDB[] = await BaseDatabase
