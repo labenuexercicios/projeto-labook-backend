@@ -2,7 +2,7 @@ import z from "zod"
 import { UserModel } from "../../models/User"
 
 export interface GetUsersInputDTO {
-  name: string,
+  name?: string,
   token: string 
 }
 
