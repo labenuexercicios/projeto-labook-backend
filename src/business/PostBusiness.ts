@@ -7,7 +7,7 @@ import { IdGenerator } from "../services/idGenerator"
 import { TokenManager } from "../services/TokenManager"
 import { USER_ROLES } from "../models/User"
 import { EditPostInputDTO, EditPostOutputDTO } from "../dtos/Posts/editPost.dto"
-import { GetPostsInputDTO, GetPostByIdInputDTO, GetPostsOutputDTO } from "../dtos/Posts/getPosts.dto"
+import { GetPostsInputDTO, GetPostsOutputDTO } from "../dtos/Posts/getPosts.dto"
 import { CreatePostInputDTO, CreatePostOutputDTO } from "../dtos/Posts/createPost.dto"
 import { DeletePostInputDTO, DeletePostOutputDTO } from "../dtos/Posts/deletePost.dto"
 import { LikeOrDislikePostInputDTO, LikeOrDislikePostOutputDTO } from "../dtos/Posts/likeOrDislike.dto"
@@ -94,34 +94,6 @@ export class PostBusiness {
 
     const output: GetPostsOutputDTO = posts
     return output
-  }
-
-  public getPostById = async (
-    input: GetPostByIdInputDTO
-  ): Promise<GetSinglePostOutputDTO> => {
-
-    const { id, token } = input
-
-    const payload = this.tokenManager.getPayload(token)
-    const postDB = await this.postDatabase.findPostById(id)
-
-    if (!payload || payload === null) {
-      throw new UnauthorizedError()
-    }
-
-    const post = new Post(
-      postDB.id,
-      postDB.content,
-      postDB.likes,
-      postDB.dislikes,
-      postDB.created_at,
-      postDB.updated_at,
-      postDB.creator_id,
-      postDB.creator_name
-    )
-
-    return post.toBusinessModel()
-
   }
 
   public editPost = async (

@@ -68,7 +68,7 @@ As relações entre as tabelas, tal como a tipagem de suas colunas foram elabora
 
 # Lista de endpoints
 
-<img src="https://i.ibb.co/RSyGsSQ/image.png" alt="endpoints"></img>
+<img src="https://i.ibb.co/fvZwNbt/image.png" alt="endpoints"></img>
 
 
 ## Signup
@@ -251,28 +251,7 @@ Endpoint protegido, requer um token jwt para acessá-lo. O usuário pode inserir
         }
     }
 ]
-```
 
-## Get post by id
-Endpoint protegido, requer um token jwt para acessá-lo. 
-```typescript
-// request GET /posts/?id
-// query params = "id"
-// headers.authorization = "token jwt"
-// response
-// status 200 OK
-     {
-        "id": "uma uuid v4",
-        "content": "kkkkkkkkkrying",
-        "likes": 0,
-        "dislikes" 0,
-        "createdAt": "2023-01-20T15:41:12:000Z"
-        "updatedAt": "2023-01-20T15:49:55:000Z"
-        "creator": {
-            "id": "uma uuid v4",
-            "name": "Ciclana"
-        }
-    }
 ```
 
 ## Edit post
