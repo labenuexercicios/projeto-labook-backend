@@ -1,0 +1,14 @@
+# Arquivos de Variáveis de Ambiente do dotenv
+.env
+
+# Diretório de Dependências do Node.js
+node_modules
+
+# Diretório de Build
+build
+
+# Arquivos .DS_Store (Arquivos criados automaticamente no Mac)
+.DS_Store
+
+# Arquivos com Extensão .db
+*.db
