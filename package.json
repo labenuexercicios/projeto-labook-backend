@@ -1,0 +1,43 @@
+{
+  "name": "labecommerce-backend",
+  "version": "1.0.0",
+  "description": "Este arquivo servirá ára todo o projeto backend",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "tsc && node ./build/index.js",
+    "build": "tsc",
+    "dev": "ts-node-dev src/index.ts"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/thaisbuenopinto/labecommerce-backend.git"
+  },
+  "author": "thais-bueno",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/thaisbuenopinto/labecommerce-backend/issues"
+  },
+  "homepage": "https://github.com/thaisbuenopinto/labecommerce-backend#readme",
+  "devDependencies": {
+    "@types/express": "^4.17.18",
+    "@types/jsonwebtoken": "^9.0.2",
+    "bcryptjs": "^2.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "jsonwebtoken": "^9.0.1",
+    "knex": "^2.5.1",
+    "sqlite3": "^5.1.6",
+    "uuid": "^9.0.1",
+    "zod": "^3.22.2"
+  },
+  "dependencies": {
+    "@types/bcryptjs": "^2.4.4",
+    "@types/cors": "^2.8.14",
+    "@types/uuid": "^9.0.4",
+    "bcrypt": "^5.1.1",
+    "express": "^4.18.2",
+    "knex": "^2.5.1",
+    "sqlite3": "^5.1.6"
+  }
+}
