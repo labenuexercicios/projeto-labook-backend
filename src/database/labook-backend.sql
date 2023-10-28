@@ -1,4 +1,4 @@
--- Active: 1698518664260@@127.0.0.1@3306
+-- Active: 1698525161696@@127.0.0.1@3306
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
@@ -27,5 +27,11 @@ CREATE TABLE likes_dislikes (
     FOREIGN KEY (post_id) REFERENCES posts(id)
 );
 
+INSERT INTO users (id, name, email, password, role)
+VALUES 
+    ('u001', 'Fulano', 'fulano@gmail.com', 'fulano123', 'admin'),
+    ('u002', 'Beltrano', 'beltrano@gmail.com', 'beltrano123', 'user');
+
+SELECT * FROM users;
 
 
