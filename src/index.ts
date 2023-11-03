@@ -32,3 +32,9 @@ app.get("/ping", async (req: Request, res: Response) => {
 const userController = new UserController();
 
 app.get("/users", userController.getUsers);
+
+app.post("/users", userController.createUsers);
+
+app.put("/users/:id", userController.updateUsers);
+
+app.delete("/users/:id", userController.deleteUsers);
