@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import { UserController } from "./controller/UserController";
 
 const app = express();
 
@@ -27,3 +28,7 @@ app.get("/ping", async (req: Request, res: Response) => {
     }
   }
 });
+
+const userController = new UserController();
+
+app.get("/users", userController.getUsers);
