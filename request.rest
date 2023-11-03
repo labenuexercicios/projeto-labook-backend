@@ -1,2 +1,29 @@
 GET http://localhost:3003/users
 ###
+
+POST http://localhost:3003/users
+Content-Type: application/json
+
+  {
+    "id": "u005",
+    "name": "André",
+    "email": "andre@email.com",
+    "password": "80239212",
+    "role": "user"
+  }
+###
+
+PUT http://localhost:3003/users/u006
+Content-Type: application/json
+
+  {
+    "id": "u006",
+    "name": "Beltrano",
+    "email": "beltrano@email.com",
+    "password": "90239111",
+    "role": "admin"
+  }
+###
+
+delete http://localhost:3003/users/u006
+###
