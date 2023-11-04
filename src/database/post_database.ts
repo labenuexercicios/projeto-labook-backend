@@ -1,4 +1,4 @@
-import {  POST_LIKE, PostsDB, likeDeslikeDB  } from "../models/Post";
+import {  POST_LIKE, PostsDB, likeDeslikeDB  } from "../models/post";
 
 import { BaseDatabase } from "./base_database";
 

@@ -2,7 +2,7 @@ import { UserDatabase } from "../database/users_database";
 import { LoginInputDTO, LoginOutputDTO } from "../dtos/users/login.dto";
 import { SignupInputDTO, SignupOutputDTO } from "../dtos/users/signup.dto";
 import { BadRequestError } from "../error/bad_request_error";
-import { USER_ROLES, User } from "../models/user";
+import { User, USER_ROLES } from "../models/user";
 import { HashManager } from "../service/hash_manager";
 import { IdGenerator } from "../service/id_generator";
 import { TokenManager, TokenPayload } from "../service/token_manager";

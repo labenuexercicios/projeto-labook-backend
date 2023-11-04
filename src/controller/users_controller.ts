@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { UserBusiness } from "../business/UsersBusiness";
-import { BaseError } from "../error/BaseError";
-import { LoginSchema } from "../dtos/Users/login.dto";
-import { SignupSchema } from "../dtos/Users/signup.dto";
+import { UserBusiness } from "../business/user_business";
+import { BaseError } from "../error/base_error";
+import { LoginSchema } from "../dtos/users/login.dto";
+import { SignupSchema } from "../dtos/users/signup.dto";
 import { ZodError } from "zod"
 
 export class UserController {

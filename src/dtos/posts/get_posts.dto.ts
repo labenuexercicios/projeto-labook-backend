@@ -1,6 +1,6 @@
 import z from "zod"
 
-import { GetPostsModel} from "../../models/Post"
+import { GetPostsModel} from "../../models/post"
 
 
 export interface GetPostsInputDTO {

@@ -1,12 +1,12 @@
 import { Request, Response } from "express-serve-static-core";
 import { PostsBusiness } from "../business/post_business";
-import { GetPostsSchema } from "../dtos/Posts/getPosts.dto";
-import { EditPostSchema } from "../dtos/Posts/editPosts.dto";
+import { GetPostsSchema } from "../dtos/posts/get_posts.dto";
+import { EditPostSchema } from "../dtos/posts/edit_posts.dto";
 import { ZodError } from "zod";
-import { BaseError } from "../error/BaseError";
-import { createPostSchema } from "../dtos/Posts/createPosts.dto";
-import { deletePostSchema } from "../dtos/Posts/deletePosts.dto";
-import { LikeDislikeSchema } from "../dtos/Posts/likeDislike.dto";
+import { BaseError } from "../error/base_error";
+import { createPostSchema } from "../dtos/posts/create_posts.dto";
+import { deletePostSchema } from "../dtos/posts/delete_posts.dto";
+import { LikeDislikeSchema } from "../dtos/posts/like_dislike.dto";
 
 export class PostsController {
   constructor(private postsBusiness: PostsBusiness) {}
