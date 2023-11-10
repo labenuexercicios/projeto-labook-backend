@@ -52,6 +52,7 @@ export class Post {
     }
 
     public getUpdatedAt(): string {
+        this.setUpdatedAt(new Date().toISOString())
         return this.updatedAt
     }
     public setUpdatedAt(newValue: string) {
