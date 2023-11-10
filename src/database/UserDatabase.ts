@@ -1,4 +1,4 @@
-import { TUserDB } from "../types";
+import { UserDB } from "../types";
 import { BaseDatabase } from "./BaseDatabase";
 
 export class UserDatabase extends BaseDatabase {
@@ -8,12 +8,12 @@ export class UserDatabase extends BaseDatabase {
     let usersDB;
 
     if (q) {
-      const result: Array<TUserDB> = await BaseDatabase.connection(
+      const result: Array<UserDB> = await BaseDatabase.connection(
         UserDatabase.TABLE_USERS
       ).where("name", "LIKE", `%${q}%`);
       usersDB = result;
     } else {
-      const result: Array<TUserDB> = await BaseDatabase.connection(
+      const result: Array<UserDB> = await BaseDatabase.connection(
         UserDatabase.TABLE_USERS
       );
 
@@ -21,16 +21,16 @@ export class UserDatabase extends BaseDatabase {
     }
     return usersDB;
   }
-  public async findUserById(id: string): Promise<TUserDB | undefined> {
-    const [userDB]: Array<TUserDB | undefined> = await BaseDatabase.connection(UserDatabase.TABLE_USERS).where('id', id)
+  public async findUserById(id: string): Promise<UserDB | undefined> {
+    const [userDB]: Array<UserDB | undefined> = await BaseDatabase.connection(UserDatabase.TABLE_USERS).where('id', id)
     return userDB
   }
 
-  public async insertUser(userDb: TUserDB): Promise<void> {
+  public async insertUser(userDb: UserDB): Promise<void> {
     await BaseDatabase.connection(UserDatabase.TABLE_USERS).insert(userDb)
   }
 
-  public async updateUser(userDb: TUserDB, id: string): Promise<void> {
+  public async updateUser(userDb: UserDB, id: string): Promise<void> {
     await BaseDatabase.connection(UserDatabase.TABLE_USERS).update(userDb).where('id', id)
   }
 

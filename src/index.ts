@@ -3,7 +3,10 @@ import cors from 'cors'
 import { Post } from './models/Post'
 import { User } from './models/User'
 import { UserDatabase } from './database/UserDatabase'
-import { TUserDB } from './types'
+import { PostDB, UserDB } from './types'
+import { PostDatabase } from './database/PostDatabase'
+import { BaseDatabase } from './database/BaseDatabase'
+import { UserController } from './controller/UserController'
 
 const app = express()
 app.use(express.json())
@@ -17,153 +20,14 @@ app.listen('3003', () => {
 app.get('/ping', (req: Request, res: Response) => {
     res.status(200).send('pong')
 })
+const userController = new UserController()
 
 // iniciando CRUD USERS
-app.get('/users', async (req: Request, res: Response) => {
-    try {
-        const q = req.query.q as string
-        const userDatabase = new UserDatabase()
-        const usersDB = await userDatabase.findUsers(q)
-        const users: Array<User> = usersDB.map(userDB => new User(
-            userDB.id,
-            userDB.name,
-            userDB.email,
-            userDB.password,
-            userDB.role,
-            userDB.created_at
-        ))
-        res.status(200).send(users)
-    } catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-})
+app.get('/users', userController.fetchUsers)
 // Post new user
-app.post('/users', async (req: Request, res: Response) => {
-    try {
-        const {id, name, email, password, role } = req.body
-        if (typeof id !== "string") {
-            res.status(400)
-            throw new Error("'id' deve ser string")
-        }
-
-        if (typeof name !== "string") {
-            res.status(400)
-            throw new Error("'name' deve ser string")
-        }
-
-        if (typeof email !== "string") {
-            res.status(400)
-            throw new Error("'email' deve ser string")
-        }
-
-        if (typeof password !== "string") {
-            res.status(400)
-            throw new Error("'password' deve ser string")
-        }
-        if (typeof role !== 'string') {
-            res.status(400)
-            throw new Error("'role' deve ser string")
-        }
-        const userDatabase = new UserDatabase()
-        const userDBExists = await userDatabase.findUserById(id)
-        if(userDBExists) {
-            res.status(400)
-            throw new Error("o 'id' ja esta sendo utilizado")
-        }
-        const newUser = new User(
-            id,
-            name,
-            email,
-            password,
-            role,
-            new Date().toISOString()
-        )
-        const newUserDB: TUserDB = {
-            id: newUser.getId(),
-            name: newUser.getName(),
-            email: newUser.getEmail(),
-            password: newUser.getPassword(),
-            role: newUser.getRole(),
-            created_at: newUser.getCreatedAt()
-        }
-
-        await userDatabase.insertUser(newUserDB)
-        res.status(200).send(newUser)
-        
-    } catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-})
+app.post('/users', userController.createUser)
 // PUT user ja existente
-app.put('/users/:id', async (req: Request, res: Response) => {
-    try {
-        const idToEdit = req.params.id
-        const {name, email, password, role} = req.body
-        
-        const userDatabase = new UserDatabase()
-        const userDB = await userDatabase.findUserById(idToEdit)
-        if (!userDB) {
-            res.status(400)
-            throw new Error("'id' nao encontrado")
-        }
-
-        const user = new User(
-            userDB.id,
-            userDB.name,
-            userDB.email,
-            userDB.password,
-            userDB.role,
-            userDB.created_at
-        )
-        name && user.setName(name)
-        email && user.setEmail(email)
-        password && user.setPassword(password)
-        role && user.setRole(role)
-
-        const userEdited: TUserDB = {
-            id: user.getId(),
-            name: user.getName(),
-            email: user.getEmail(),
-            password: user.getPassword(),
-            role: user.getRole(),
-            created_at: user.getCreatedAt()
-        }
-        await userDatabase.updateUser(userEdited, idToEdit)
-        res.status(200).send(user)
-    } catch (error) {
-        console.log(error)
-
-        if (req.statusCode === 200) {
-            res.status(500)
-        }
-
-        if (error instanceof Error) {
-            res.send(error.message)
-        } else {
-            res.send("Erro inesperado")
-        }
-    }
-})
+app.put('/users/:id', userController.updateUser)
 // Delete user existente
 app.delete('/users/:id', async (req: Request, res: Response) => {
     try {
@@ -182,7 +46,7 @@ app.delete('/users/:id', async (req: Request, res: Response) => {
             userDB.role,
             userDB.created_at
         )
-        const deletedUser: TUserDB = {
+        const deletedUser: UserDB = {
             id: user.getId(),
             name: user.getName(),
             email: user.getEmail(),
@@ -193,6 +57,189 @@ app.delete('/users/:id', async (req: Request, res: Response) => {
 
         await userDatabase.deleteUser(deletedUser, idToDelete)
         res.status(200).send(user)
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+// CRUD posts
+// GET posts
+app.get('/posts', async (req: Request, res: Response) => {
+    try {
+        const postDatabase = new PostDatabase()
+        const postDB = await postDatabase.getPosts()
+        const posts: Array<Post> = postDB.map(post => new Post(
+            post.id,
+            post.creator_id,
+            post.content,
+            post.likes,
+            post.dislikes,
+            post.created_at,
+            post.updated_at
+        ))
+
+        res.status(200).send(posts)
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+
+
+// Post new post
+app.post('/posts', async (req: Request, res: Response) => {
+    try {
+        const {id, creatorId, content} = req.body
+        if (typeof creatorId !== 'string') {
+            res.status(400)
+            throw new Error('type errado')
+        }
+        if (typeof content !== 'string') {
+            res.status(400)
+            throw new Error('type errado')
+        }
+        const postDatabase = new PostDatabase()
+        const idToBeCreated = await postDatabase.getPostById(id)
+        if(idToBeCreated) {
+            res.status(400)
+            throw new Error('esse id ja esta cadastrado')
+        }
+        const newPost = new Post(
+            id,
+            creatorId,
+            content,
+            0,
+            0,
+            new Date().toISOString(),
+            new Date().toISOString()
+        )
+        const newPostDB: PostDB = {
+            id: newPost.getId(),
+            creator_id: newPost.getCreatorId(),
+            content: newPost.getContent(),
+            likes: newPost.getLikes(),
+            dislikes: newPost.getDislikes(),
+            created_at: newPost.getCreatedAt(),
+            updated_at: newPost.getUpdatedAt()
+        }
+
+        await postDatabase.insertPost(newPostDB)
+        res.status(200).send(newPost)
+
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+// PUT Edit a post
+app.put('/posts/:id', async (req: Request, res: Response) => {
+    try {
+        const idToBeEdited = req.params.id
+        const {id, content} = req.body        
+
+        const postDatabase = new PostDatabase()
+        const postDB = await postDatabase.getPostById(idToBeEdited)
+        if(!postDB) {
+            res.status(400)
+            throw new Error("'id' nao encontrado")
+        }
+        const post = new Post(
+            postDB.id,
+            postDB.creator_id,
+            postDB.content,
+            postDB.likes,
+            postDB.dislikes,
+            postDB.created_at,
+            postDB.updated_at
+        )
+        id && post.setId(id)
+        content && post.setContent(content)
+        
+        const newPostDb: PostDB = {
+            id: post.getId(),
+            creator_id: post.getCreatorId(),
+            content: post.getContent(),
+            likes: post.getLikes(),
+            dislikes: post.getDislikes(),
+            created_at: post.getCreatedAt(),
+            updated_at: post.getUpdatedAt()
+
+        }
+        await postDatabase.updatePost(newPostDb, idToBeEdited)
+        res.status(200).send(post)
+
+    } catch (error) {
+        console.log(error)
+
+        if (req.statusCode === 200) {
+            res.status(500)
+        }
+
+        if (error instanceof Error) {
+            res.send(error.message)
+        } else {
+            res.send("Erro inesperado")
+        }
+    }
+})
+// Delete existing post
+app.delete('/post/:id', async (req: Request, res: Response) => {
+    try {
+        const idToDelete = req.params.id
+        const postDatabase = new PostDatabase()
+        const postDB = await postDatabase.getPostById(idToDelete)
+        if(!postDB) {
+            res.status(400)
+            throw new Error('id nao encontrado')
+        }
+        const post = new Post(
+            postDB.id,
+            postDB.creator_id,
+            postDB.content,
+            postDB.likes,
+            postDB.dislikes,
+            postDB.created_at,
+            postDB.updated_at
+        )
+        const deletedPost: PostDB = {
+            id: post.getId(),
+            creator_id: post.getCreatorId(),
+            content: post.getContent(),
+            likes: post.getLikes(),
+            dislikes: post.getDislikes(),
+            created_at: post.getCreatedAt(),
+            updated_at: post.getUpdatedAt()
+        }
+
+        await postDatabase.deletePost(deletedPost, idToDelete)
+        res.status(200).send(post)
     } catch (error) {
         console.log(error)
 
