@@ -1,4 +1,6 @@
 import { PostDatabase } from "../database/PostDatabase";
+import { BadRequestError } from "../errors/BadRequestError";
+import { NotFoundError } from "../errors/NotFoundError";
 import { Post } from "../models/Post";
 import { PostDB } from "../types";
 
@@ -23,15 +25,15 @@ export class PostsBusiness {
   public async createNewPost(input: any) {
     const { id, creatorId, content } = input;
     if (typeof creatorId !== "string") {
-      throw new Error("type errado");
+      throw new BadRequestError("type errado");
     }
     if (typeof content !== "string") {
-      throw new Error("type errado");
+      throw new BadRequestError("type errado");
     }
     const postDatabase = new PostDatabase();
     const idToBeCreated = await postDatabase.getPostById(id);
     if (idToBeCreated) {
-      throw new Error("esse id ja esta cadastrado");
+      throw new BadRequestError("esse id ja esta cadastrado");
     }
     const newPost = new Post(
       id,
@@ -61,7 +63,7 @@ export class PostsBusiness {
     const postDatabase = new PostDatabase();
     const postDB = await postDatabase.getPostById(id);
     if (!postDB) {
-      throw new Error("'id' nao encontrado");
+      throw new NotFoundError("'id' nao encontrado");
     }
     const post = new Post(
       postDB.id,
@@ -91,7 +93,7 @@ export class PostsBusiness {
     const postDatabase = new PostDatabase();
     const postDB = await postDatabase.getPostById(id);
     if (!postDB) {
-      throw new Error("id nao encontrado");
+      throw new NotFoundError("id nao encontrado");
     }
     const post = new Post(
       postDB.id,

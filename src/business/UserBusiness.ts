@@ -1,4 +1,6 @@
 import { UserDatabase } from "../database/UserDatabase";
+import { BadRequestError } from "../errors/BadRequestError";
+import { NotFoundError } from "../errors/NotFoundError";
 import { User } from "../models/User";
 import { UserDB } from "../types";
 
@@ -24,27 +26,27 @@ export class UserBusiness {
   public async createUser(input: any) {
     const { id, name, email, password, role } = input;
     if (typeof id !== "string") {
-      throw new Error("'id' deve ser string");
+      throw new BadRequestError("'id' deve ser string");
     }
 
     if (typeof name !== "string") {
-      throw new Error("'name' deve ser string");
+      throw new BadRequestError("'name' deve ser string");
     }
 
     if (typeof email !== "string") {
-      throw new Error("'email' deve ser string");
+      throw new BadRequestError("'email' deve ser string");
     }
 
     if (typeof password !== "string") {
-      throw new Error("'password' deve ser string");
+      throw new BadRequestError("'password' deve ser string");
     }
     if (typeof role !== "string") {
-      throw new Error("'role' deve ser string");
+      throw new BadRequestError("'role' deve ser string");
     }
     const userDatabase = new UserDatabase();
     const userDBExists = await userDatabase.findUserById(id);
     if (userDBExists) {
-      throw new Error('"id" ja cadasttrado');
+      throw new BadRequestError('"id" ja cadasttrado');
     }
     const newUser = new User(
       id,
@@ -70,7 +72,7 @@ export class UserBusiness {
     const userDatabase = new UserDatabase();
     const userDBExists = await userDatabase.findUserById(id);
     if (!userDBExists) {
-      throw new Error('Usuario nao econtrado, cheque o "id"');
+      throw new NotFoundError('Usuario nao econtrado, cheque o "id"');
     }
     const user = new User(
       userDBExists.id,
@@ -101,7 +103,7 @@ export class UserBusiness {
     const userDatabase = new UserDatabase();
     const userDBExists = await userDatabase.findUserById(id);
     if (!userDBExists) {
-      throw new Error("Usuario nao encontrado");
+      throw new NotFoundError("Usuario nao encontrado");
     }
     const user = new User(
       userDBExists.id,

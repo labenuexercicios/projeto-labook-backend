@@ -1,5 +1,6 @@
 import { Request, Response } from "express";
 import { UserBusiness } from "../business/UserBusiness";
+import { BaseError } from "../errors/BaseError";
 
 export class UserController {
   public fetchUsers = async (req: Request, res: Response) => {
@@ -10,7 +11,11 @@ export class UserController {
 
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
   };
   public createUser = async (req: Request, res: Response) => {
@@ -27,7 +32,11 @@ export class UserController {
 
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
   };
   public updateUser = async (req: Request, res: Response) => {
@@ -44,7 +53,11 @@ export class UserController {
 
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
   };
   public deleteUser = async (req: Request, res: Response) => {
@@ -57,7 +70,11 @@ export class UserController {
 
       res.status(200).send(output);
     } catch (error) {
-      console.log(error);
+      if (error instanceof BaseError) {
+        res.status(error.statusCode).send(error.message);
+      } else {
+        res.status(500).send("Erro inesperado");
+      }
     }
   };
 }
