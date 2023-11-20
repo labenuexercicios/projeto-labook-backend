@@ -1,8 +1,8 @@
 import { PostDatabase } from "../database/PostDatabase";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
-import { Post } from "../models/Post";
-import { PostDB } from "../types";
+import { Post, PostDB } from "../models/Post";
+
 
 export class PostsBusiness {
   public async fetchPosts(input: any) {

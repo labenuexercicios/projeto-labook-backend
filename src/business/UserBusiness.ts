@@ -1,50 +1,46 @@
 import { UserDatabase } from "../database/UserDatabase";
+import { CreateUserInputDTO, CreateUserOutputDTO } from "../dtos/Users/createUser.dto";
+import { DeleteUserInputDTO, DeleteUserOutputDTO } from "../dtos/Users/deleteUser.dto";
+import {
+  FetchUsersInputDTO,
+  FetchUsersOutputDTO,
+} from "../dtos/Users/fetchUsers.dto";
+import { UpdateUserInputDTO, UpdateUserOutputDTO } from "../dtos/Users/updateUser.dto";
 import { BadRequestError } from "../errors/BadRequestError";
 import { NotFoundError } from "../errors/NotFoundError";
-import { User } from "../models/User";
-import { UserDB } from "../types";
+import { User, UserDB } from "../models/User";
 
 export class UserBusiness {
-  public async fetchUsers(input: any) {
-    const userDatabase = new UserDatabase();
-    const usersDB: Array<UserDB> = await userDatabase.findUsers(input);
-
-    const users = usersDB.map(
-      (userDB) =>
-        new User(
-          userDB.id,
-          userDB.name,
-          userDB.email,
-          userDB.password,
-          userDB.role,
-          userDB.created_at
-        )
+  constructor(private userDatabase: UserDatabase) {}
+  public async fetchUsers(
+    input: FetchUsersInputDTO
+  ): Promise<FetchUsersOutputDTO> {
+    const { nameToSearch } = input;
+    const usersDB: Array<UserDB> = await this.userDatabase.findUsers(
+      nameToSearch
     );
-    return users;
+
+    const output: FetchUsersOutputDTO = {
+      users: usersDB.map(
+        (userDB) =>
+          new User(
+            userDB.id,
+            userDB.name,
+            userDB.email,
+            userDB.password,
+            userDB.role,
+            userDB.created_at
+          )
+      )
+    }
+    return output;
   }
 
-  public async createUser(input: any) {
+  public async createUser(
+    input: CreateUserInputDTO): Promise<CreateUserOutputDTO> {
     const { id, name, email, password, role } = input;
-    if (typeof id !== "string") {
-      throw new BadRequestError("'id' deve ser string");
-    }
 
-    if (typeof name !== "string") {
-      throw new BadRequestError("'name' deve ser string");
-    }
-
-    if (typeof email !== "string") {
-      throw new BadRequestError("'email' deve ser string");
-    }
-
-    if (typeof password !== "string") {
-      throw new BadRequestError("'password' deve ser string");
-    }
-    if (typeof role !== "string") {
-      throw new BadRequestError("'role' deve ser string");
-    }
-    const userDatabase = new UserDatabase();
-    const userDBExists = await userDatabase.findUserById(id);
+    const userDBExists = await this.userDatabase.findUserById(id);
     if (userDBExists) {
       throw new BadRequestError('"id" ja cadasttrado');
     }
@@ -64,13 +60,25 @@ export class UserBusiness {
       role: newUser.getRole(),
       created_at: newUser.getCreatedAt(),
     };
-    await userDatabase.insertUser(newUserDB);
-    return newUser;
+    await this.userDatabase.insertUser(newUserDB);
+    const output: CreateUserOutputDTO = {
+      message: "Usuario registrado com sucesso",
+      user: {
+        id: newUser.getId(),
+        name: newUser.getName(),
+        email: newUser.getEmail(),
+        password: newUser.getPassword(),
+        role: newUser.getRole(),
+        creadtedAt: newUser.getCreatedAt()
+      }
+    }
+    return output;
   }
-  public async updateUser(input: any) {
-    const { id, name, email, password, role } = input;
-    const userDatabase = new UserDatabase();
-    const userDBExists = await userDatabase.findUserById(id);
+  public async updateUser(
+    input: UpdateUserInputDTO
+    ): Promise<UpdateUserOutputDTO> {
+    const { idToEdit, id, name, email, password, role } = input;
+    const userDBExists = await this.userDatabase.findUserById(idToEdit);
     if (!userDBExists) {
       throw new NotFoundError('Usuario nao econtrado, cheque o "id"');
     }
@@ -95,13 +103,24 @@ export class UserBusiness {
       role: user.getRole(),
       created_at: user.getCreatedAt(),
     };
-    await userDatabase.updateUser(newUserDB, id);
-    return user;
+    await this.userDatabase.updateUser(newUserDB, idToEdit);
+
+    const output: UpdateUserOutputDTO = {
+      message: "Usuario editado com sucesso",
+      user: {
+        id: user.getId(),
+        name: user.getName(),
+        email: user.getEmail(),
+        password: user.getPassword(),
+        role: user.getRole(),
+        createdAt: user.getCreatedAt()
+      }
+    }
+    return output;
   }
-  public async deleteUser(input: any) {
-    const { id } = input;
-    const userDatabase = new UserDatabase();
-    const userDBExists = await userDatabase.findUserById(id);
+  public async deleteUser(input: DeleteUserInputDTO): Promise<DeleteUserOutputDTO> {
+    const { idToDelete } = input;
+    const userDBExists = await this.userDatabase.findUserById(idToDelete);
     if (!userDBExists) {
       throw new NotFoundError("Usuario nao encontrado");
     }
@@ -121,7 +140,12 @@ export class UserBusiness {
       role: user.getRole(),
       created_at: user.getCreatedAt(),
     };
-    await userDatabase.deleteUser(userDB, id);
-    return user;
+    await this.userDatabase.deleteUser(userDB, idToDelete);
+
+    const output: DeleteUserOutputDTO = {
+      message: "Usuario deletado com sucesso",
+      user
+    }
+    return output;
   }
 }
