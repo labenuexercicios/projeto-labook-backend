@@ -27,6 +27,32 @@ Diagrama do banco de dados demonstrando suas tabelas e a relação entre elas:
 
 https://dbdiagram.io/d/63d16443296d97641d7c1ae1
 
+## 🖥️ Rodando o Projeto
+
+Para rodar o projeto em sua máquina, siga as intruções seguintes:
+
+1. Clone o repositório:
+
+```bash
+git clone https://github.com/LinconCS/projeto-labook-backend.git
+
+```
+
+2. Instale as dependências do projeto:
+
+```bash
+cd projeto-labook-backend
+npm install
+```
+
+3. Inicie o servidor:
+
+```bash
+npm run dev
+```
+
+O servidor será iniciado na porta especificada na variável de ambiente `PORT` (padrão: 3003).
+
 
 ## 📌 Endpoints da API
 

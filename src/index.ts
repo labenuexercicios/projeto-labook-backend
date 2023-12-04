@@ -20,6 +20,5 @@ app.get("/ping", (req, res) => {
 })
 
 app.use("/users", userRouter)
-
 app.use("/posts", postRouter)
 
