@@ -1,3 +1,7 @@
 node_modules
-request.request
+request.rest
 att.txt
+.env
+build
+.DS_Store
+*.db
