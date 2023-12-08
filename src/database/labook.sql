@@ -3,21 +3,21 @@
 
 PRAGMA foreign_keys=on;
 
---Ainda tenho duvidas sobre o quesito role, por isso ele ainda não consta na tabela.
 CREATE TABLE users (
     id TEXT PRIMARY KEY UNIQUE NOT NULL,
     name TEXT NOT NULL,
     email TEXT UNIQUE NOT NULL,
     password TEXT NOT NULL,
+    role TEXT NOT NULL,
     created_at TEXT DEFAULT (DATETIME())
 );
 
 -- DROP TABLE IF EXISTS users;
 
-INSERT INTO users (id, name, email, password) 
-VALUES ('u001', 'Fulano', 'fulano@email.com', 'fulano123'),
-       ('u002', 'Beltrana', 'beltrana@email.com', 'beltrano123'),
-       ('u003', 'Astrodev', 'astrodev@email.com', 'astrodev99');
+INSERT INTO users (id, name, email, password, role) 
+VALUES ('u001', 'Fulano', 'fulano@email.com', 'fulano123', 'user'),
+       ('u002', 'Beltrana', 'beltrana@email.com', 'beltrano123', 'user'),
+       ('u003', 'Astrodev', 'astrodev@email.com', 'astrodev99', 'user');
 
 
 SELECT * FROM users;
